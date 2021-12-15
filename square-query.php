@@ -52,7 +52,7 @@ foreach($array as $location){
 		$result = $conn->query($sql);
 		
 		$msg.= "<center><h3>Location: ".$location."</h3></center>";
-
+		$beerExist=0;
 		if ($result->num_rows > 0) {
 		  $msg.= "<table>
 		  <tr>
@@ -60,6 +60,7 @@ foreach($array as $location){
 			<th>Item Sold</th>
 			<th>Gross Sales</th>
 		  </tr>";
+		  
 		  $values=array(array("Category","Item Sold","Gross Sales","Code","Date","Number","Memo/Description","Fees","Discounts","Taxes","Tip"));
 		  
 		  while($row = $result->fetch_assoc()) {
@@ -112,6 +113,7 @@ foreach($array as $location){
 		} else {
 		  $msg.= "<center><h3>No result</h3></center>";
 		}
+		
 		$msg.= "</table>";
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -143,7 +145,7 @@ function get_code($rets){
         $code="64200";
     } 
 	else if($rets=="Beverages"){
-        $code="63100";
+        $code="63200";
     }
 	else if($rets=="Coffee"){
         $code="63100";
