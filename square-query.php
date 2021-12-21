@@ -55,6 +55,7 @@ foreach($array as $location){
 			<th>Gross Sales</th>
 		  </tr>";
 		  $values=array(array("Category","Item Sold","Gross Sales","Code","Date","Number","Memo/Description","Fees","Discounts","Taxes","Tip"));
+		  
 		  while($row = $result->fetch_assoc()) {
 			
 			$category = $row["Category"];
@@ -69,9 +70,7 @@ foreach($array as $location){
 					$Sales += str_replace("$","",$row["Gross_Sales"]);
 				
 					}
-				}
-			
-			
+				}		
 			$msg.= " 
 					<tr>
 					<td>".$category."</td>
@@ -81,17 +80,38 @@ foreach($array as $location){
 				 ";
 			$yesterday=date('m/d/Y',strtotime("-1 days"));	 
 			//$yesterday = date_format($date,"m/d/Y"); 
-			array_push($values,array($category,$Qty,number_format((float)$Sales, 2, '.', ''),get_code($category),$yesterday,$location." ".$yesterday,"To Post ".date('M Y')." Rev"));
+			array_push($values,array($category,$Qty,"$".number_format((float)$Sales, 2, '.', ''),get_code($category),$yesterday,$location." ".$yesterday,"To Post ".date('M Y')." Rev"));
 		  }
+		  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		  		   
+			   $sql3 = "SELECT  Fees, Discounts, Tax, Tip FROM `square_transaction` where Location = '".$location."'";
+			   $result3 = $conn->query($sql3);			   
+			   $Fees = 0;
+			   $Discounts = 0;
+			   $Tax = 0;
+			   $Tip = 0;
+			   if ($result3->num_rows > 0) {
+					while($row = $result3->fetch_assoc()){
+					$Fees += preg_replace("/[^0-9.]/", "", $row["Fees"]);
+					$Discounts += preg_replace("/[^0-9.]/", "", $row["Discounts"]);
+					$Tax += preg_replace("/[^0-9.]/", "", $row["Tax"]);
+					$Tip += preg_replace("/[^0-9.]/", "", $row["Tip"]);
+					}
+				}	   
+			   $values[1][7]= "$".$Fees;
+			   $values[1][8]= "$".$Discounts;
+			   $values[1][9]= "$".$Tax;
+			   $values[1][10]= "$".$Tip;
+		   
 		} else {
 		  $msg.= "<center><h3>No result</h3></center>";
 		}
 		$msg.= "</table>";
-		////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 
 		
-		$range = 'Sheet1!A1:G25';
+		$range = 'Sheet1!A1:K25';
 		
 		print_r($values);
 		
