@@ -1,0 +1,124 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.activation.*;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+public class SendEmail {
+
+List<String> srcFiles;
+	
+public SendEmail(List<String> filesList) throws Exception
+{		
+		srcFiles = filesList;
+		
+	 	final String username = "buenavistajunry@gmail.com";
+	    final String password = "Killingmesoftly2";
+
+	    Properties props = new Properties();
+	    props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+	    props.put("mail.smtp.auth", true);
+	    props.put("mail.smtp.starttls.enable", true);
+	    props.put("mail.smtp.host", "smtp.gmail.com");
+	    props.put("mail.smtp.port", "587");
+
+	    Session session = Session.getInstance(props,
+	            new javax.mail.Authenticator() {
+	                protected PasswordAuthentication getPasswordAuthentication() {
+	                    return new PasswordAuthentication(username, password);
+	                }
+	            });
+	    while(true) {
+	    try {
+	        Message message = new MimeMessage(session);
+	        message.setFrom(new InternetAddress("buenavistajunry@gmail.com"));
+	        message.setRecipients(Message.RecipientType.TO,
+	                InternetAddress.parse("junrybuenavista@yahoo.com"));
+	        		//InternetAddress.parse("michaelvinocur@htgrp.net"));
+	        message.setSubject("Testing Subject");
+	        message.setText("PFA");
+
+	        MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+	        Multipart multipart = new MimeMultipart();
+	        
+	        zipFile();
+	        
+	        String file = "C:\\FPL_Downloads\\FPL.zip";
+	        String fileName = "FPL.zip";
+	        DataSource source = new FileDataSource(file);
+	        messageBodyPart.setDataHandler(new DataHandler(source));
+	        messageBodyPart.setFileName(fileName);
+	        multipart.addBodyPart(messageBodyPart);
+
+	        message.setContent(multipart);
+
+	        System.out.println("Sending PDF to email:");
+	        
+	        Transport.send(message);
+	        
+	        System.out.println("PDF sent!");
+	        break;
+		    } 
+		    catch (MessagingException e) {
+		        e.printStackTrace();
+		        System.out.println("Sending Mail waiting:");
+		        Thread.sleep(1000);
+		    }
+	    }
+	}
+public void getFileList() {
+	
+}
+public void zipFile() {
+	System.out.println("zipping file");
+	try {
+			 
+			//List<String> srcFiles = Arrays.asList("C:\\FPL_Downloads\\2021-10-04_191498179.pdf", "C:\\FPL_Downloads\\2021-10-04_209754001.pdf");
+			//List<String> srcFiles=new ArrayList<String>(); 
+		     
+		     FileOutputStream fos = new FileOutputStream("C:\\FPL_Downloads\\FPL.zip");
+		     ZipOutputStream zipOut = new ZipOutputStream(fos);
+		     for (String srcFile : srcFiles) {
+		         File fileToZip = new File(srcFile);
+		         FileInputStream fis = new FileInputStream(fileToZip);
+		         ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+		         zipOut.putNextEntry(zipEntry);
+		
+		         byte[] bytes = new byte[1024];
+		         int length;
+		         while((length = fis.read(bytes)) >= 0) {
+		             zipOut.write(bytes, 0, length);
+		         }
+		         fis.close();
+		     }
+		     zipOut.close();
+		     fos.close();
+		}catch(Exception ee) {ee.printStackTrace();}
+}	
+public static void main(String[] args)throws Exception {
+
+			
+  }
+}
+
+UPDATE fpl_accounts
+SET Due_Date = null, Update_Date = null
+WHERE Account_no = '3118686306';
+
+UPDATE fpl_accounts
+SET Due_Date = 2021-10-20 where Account_no = 1626166308
+
+

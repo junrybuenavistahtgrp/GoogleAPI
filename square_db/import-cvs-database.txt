@@ -1,0 +1,53 @@
+
+LOAD DATA INFILE 'C:/Square_download/square_data.csv'
+INTO TABLE square_data
+FIELDS TERMINATED BY ',' ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(@Date,
+Time, 
+Time_Zone,
+Category,
+Item, 
+Qty, 
+Price_Point_Name,
+SKU,
+Modifiers_Applied,
+Gross_Sales,
+Discounts, 
+Net_Sales,
+Tax,
+Transaction_ID,
+Payment_ID,
+Device_Name,
+Notes,
+Details,
+Event_Type,
+Location,
+Dining_Option,
+Customer_ID,
+Customer_Name,
+Customer_Reference_ID,
+Unit,
+Count,
+GTIN)
+SET Date = STR_TO_DATE(@Date, '%m/%d/%Y');
+
+SELECT SUM(Qty)
+FROM square_data
+WHERE Location='@theMarket'  AND Category = 'beer';
+
+
+
+SELECT Order_Date, Order_ID, Title, Item_Subtotal, Item_Quantity, Location FROM amazon_data WHERE (Item_Tax = '' OR Item_Tax = '0') AND Order_Date between '2021-08-03' and '2021-08-11'  ORDER BY Order_Date
+
+INSERT INTO updates(NO,update_date) VALUES ('','2021-10-17')
+
+
+ URL url = new URL(emailToSend);  \\\\\\\\\\\\\\\\\\\\\\\\\convert page to html code
+	        InputStream is = url.openStream();
+	        int ptr = 0;
+	        StringBuffer buffer = new StringBuffer();
+	        while ((ptr = is.read()) != -1) {
+	            buffer.append((char)ptr);
+	        }

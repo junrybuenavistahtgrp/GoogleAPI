@@ -1,0 +1,419 @@
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.io.File;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.swing.*; 
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+
+
+public class FPL_Bot {
+
+	WebDriver driver;
+	JavascriptExecutor Jscript;
+	ScrollPage scroll;
+	Statement stmt;
+	ResultSet rs;
+	Statement stmt2,stmt3;
+	ResultSet rs2;
+	SimpleDateFormat dateFormat,dateFormat2;
+	boolean closed=false;
+	File f;
+	boolean updateComplete;
+	List<String> srcFiles;
+	GUI gui;
+	
+	public FPL_Bot(){
+		
+		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		dateFormat2 =new SimpleDateFormat("MMMMM dd, yyyy");
+		f = new File("C:\\FPL_Downloads\\Document.pdf");
+		updateComplete=false;
+		Monitor monitor=new Monitor();
+		gui=new GUI();
+		monitor.start();
+		
+	}
+	public void newLogin() {
+		try {
+			System.setProperty("webdriver.chrome.driver", "C:\\Jars\\chromedriver.exe");
+			HashMap<String,Object> chromePrefs = new HashMap<String, Object>();
+			chromePrefs.put("plugins.always_open_pdf_externally", true);
+			chromePrefs.put("download.default_directory", "C:"+File.separator+"FPL_Downloads");
+			chromePrefs.put("excludeSwitches", "enable-popup-blocking");
+			ChromeOptions options = new ChromeOptions();
+			options.setExperimentalOption("prefs", chromePrefs);	
+			driver = new ChromeDriver(options);							
+			Jscript = (JavascriptExecutor) driver;
+			driver.get("https://www.fpl.com/my-account/multi-dashboard.html");
+			Thread.sleep(3000);
+			driver.findElement(By.id("core_view_form_ValidationTextBox_0")).sendKeys("bookkeeper@nbvresorts.com");
+			driver.findElement(By.id("core_view_form_ValidationTextBox_1")).sendKeys("2019SandaPar");
+			driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);		
+		}catch(NoSuchElementException e) {System.out.println("Page refresh");driver.navigate().refresh();}
+		catch(Exception ee) {ee.printStackTrace();}
+		
+	}
+	class Monitor extends Thread
+	{		
+		public void run() {
+			
+			String currentdate="";	
+			
+			while(true) {
+				try {
+					Thread.sleep(1000);
+				}catch(Exception ee) {}
+										 
+			    System.out.println("Waitings");
+			   
+			    if(!currentdate.equalsIgnoreCase(dateFormat.format(new Date()))) 
+			    { 
+			    	
+						try {
+							gui.textClear();
+							newLogin();			
+							onClickId("Login","core_view_form_Button_0_label");
+							//String[] accountgroup= {"Master","NBV","SandHome_Seascape","SandScape"};
+							String[] accountgroup= {"NBV"};
+							setDataBaseConnection();
+							for(int i=0;i<accountgroup.length;i++) {			
+										deleteAllFiles();
+										srcFiles=new ArrayList<String>();
+										rs=stmt.executeQuery("select * from fpl_accounts where (Update_Date IS null OR NOT Update_Date = CURDATE()) AND Account_Group='"+accountgroup[i]+"'");
+										Date checkDate,dueDate;
+										String account_No;
+											
+										while(rs.next()) {						
+											checkDate = rs.getDate(3);
+											dueDate = rs.getDate(2);
+											account_No = rs.getString(1);
+											
+												System.out.println("Updating account: "+account_No);
+												gui.textAppend("Updating account: "+account_No+"\n");
+												//driver.findElement(By.id("core_view_form_ValidationTextBox_4")).sendKeys(account_No);
+												typeAccount("Sending Key Account Textfield",account_No);
+												
+												
+												 onClickXpath("Click Account No.","//a[@class='account-number-link']",false);
+												 Thread.sleep(1000); 
+			
+														if(driver.findElements(By.linkText("Close")).size() != 0) {
+																		onClickLink("Click Close","Close",false);
+																		closed=true;
+																		System.out.println("click close done!");
+																	}	
+														
+												onClickLink("Click View Bill","VIEW BILL",true);	
+													
+												Date newDueDate = dateFormat2.parse(getUpdateDate("getting update date"));
+												
+												if (!newDueDate.equals(dueDate)||dueDate==null) {
+													
+														
+													
+												Download DL = new Download(account_No,this,accountgroup[i]);
+												DL.setAcc(account_No);
+												DL.setDueDate(newDueDate);
+												DL.start();
+											
+												onClickXpath("Click Download","//span[@id='core_view_form_Button_2_label']",true);
+												this.suspend();
+												System.out.println("fffffffff");
+												String originalHandle = driver.getWindowHandle();
+
+											    //Do something to open new tabs
+
+											    for(String handle : driver.getWindowHandles()) {
+											        if (!handle.equals(originalHandle)) {
+											            driver.switchTo().window(handle);
+											            driver.close();
+											        }
+											    }
+
+											    driver.switchTo().window(originalHandle);
+													    
+												driver.get("https://www.fpl.com/my-account/multi-dashboard.html");
+												System.out.println(account_No+" updated");
+												gui.textAppend("Account: "+account_No+" updated\n");	
+												
+											}else {
+												stmt2.execute("UPDATE fpl_accounts SET Update_Date = '"+dateFormat.format(new Date())+"' where account_no ='"+account_No+"'");
+												System.out.println("No update for account: "+account_No);
+												gui.textAppend("No update for account: "+account_No+"\n");
+												driver.get("https://www.fpl.com/my-account/multi-dashboard.html");
+											}	
+											gui.textAppend("\n");	
+											System.out.println("");
+											System.out.println("");
+											System.out.println("");
+										}										
+										
+										if(srcFiles.size()!=0) {
+											gui.textAppend("Sending to email zip file\n\n");
+											new SendEmail(srcFiles);
+											}
+										
+										
+										
+							}
+							System.out.println("");
+							System.out.println("");
+							System.out.println("");
+							stmt2.close();
+							stmt.close();
+							rs.close();
+							System.out.println("FPL Bot done update all accounts:");
+							currentdate = dateFormat.format(new Date());
+							gui.textAppend("FPL Bot done update all accounts:\n");
+							gui.textAppend("Date:"+currentdate+"\n\n");
+							driver.quit();
+							
+							
+							
+						}catch(NoSuchElementException e) {System.out.println("Page refreshmonitor");driver.navigate().refresh();}
+						catch(Exception ee) {System.out.println("Monitor exception");ee.printStackTrace();}
+			    }	
+			}	
+					
+		}
+		
+				public void typeAccount(String title,String input) throws Exception
+				{
+					int timeouts = 0;
+					
+					while(true) {
+						try {
+							 if(timeouts == 0) 
+								System.out.println("Starting "+title);
+							 else
+								 System.out.println("Timeout "+timeouts);				 
+							 	 driver.findElement(By.id("core_view_form_ValidationTextBox_4")).sendKeys(input);
+								
+							System.out.println(title+" complete:");
+							break;
+						}catch(NoSuchElementException e) {System.out.println("Type account refresh");driver.navigate().refresh();}
+						catch(Exception ee) {scrollDown();}
+					}
+				}
+				
+				public void onClickXpath(String title,String input,boolean forEmail) throws Exception
+				{
+					int timeouts = 0;
+					
+					while(true) {
+						try {
+							 if(timeouts == 0) 
+								System.out.println("Starting "+title);
+							 else
+								 System.out.println("Timeout "+timeouts);				 
+								driver.findElement(By.xpath(input)).click();
+							
+								if(forEmail == true) {
+									//new SendEmail();
+								}
+								
+							System.out.println(title+" complete:");
+							break;
+						}catch(NoSuchElementException e) {System.out.println("On click Xpath refresh");driver.navigate().refresh();}
+						catch(Exception ee) {scrollDown();}
+					}
+			}
+			
+			public void onClickLink(String title,String input,boolean forClose) throws Exception
+			{
+				int timeouts = 0;
+				
+				while(true) {
+					try {
+						 if(timeouts == 0) 
+							System.out.println("Starting "+title);
+						 else
+							 System.out.println("Timeout "+timeouts);
+						 
+						 driver.findElement(By.linkText(input)).click();
+						
+						System.out.println(title+" complete:");
+						break;
+					}catch(NoSuchElementException e) {System.out.println("On click link refresh");driver.navigate().refresh();
+						if(forClose==false) {
+							closed=true;
+							break;
+						}
+					}
+					 catch(Exception ee) {scrollDown();}
+				}
+			}
+			public void onClickId(String title,String input) throws Exception
+			{
+				int timeouts = 0;
+				
+				while(true) {
+					try {
+						 if(timeouts == 0) 
+							System.out.println("Starting "+title);
+						 else
+							 System.out.println("Timeout "+timeouts);
+						 
+						 driver.findElement(By.id(input)).click();
+						
+						System.out.println(title+" complete:");
+						break;
+					}catch(NoSuchElementException e) {System.out.println("On click ID refresh");driver.navigate().refresh();}
+					catch(Exception ee) {scrollDown();}
+				}
+			}
+			public String getUpdateDate(String title) throws Exception
+			{
+				int timeouts = 0;
+				
+				while(true) {
+					try {
+						 if(timeouts == 0) 
+							System.out.println("Starting "+title);
+						 else
+							 System.out.println("Timeout "+timeouts);
+						 
+							String ss = driver.findElement(By.xpath("(//span[@class='detail-text'])[3]")).getText();
+							StringTokenizer tok=new StringTokenizer(ss);
+							tok.nextToken();tok.nextToken();tok.nextToken();
+							String dateReturn = tok.nextToken()+" "+tok.nextToken()+" "+tok.nextToken();
+						System.out.println(dateReturn);
+						System.out.println(title+" complete:");
+						return dateReturn;
+					}catch(NoSuchElementException e) {System.out.println("Get update date refresh");driver.navigate().refresh();}
+					catch(Exception ee) {scrollDown();}
+				}
+			}
+			
+			public void scrollDown() {
+				 Jscript.executeScript("window.scrollBy(0,100)", "");
+			}
+	}
+	public void deleteAllFiles() {
+			
+			File folder = new File("C:"+File.separator+"FPL_Downloads");
+	        File fList[] = folder.listFiles();
+	
+	        for (File f : fList) {          
+	                f.delete(); 
+	            }
+		}
+	public void setDataBaseConnection() {
+		
+		while(true) {
+			
+		
+			System.out.println("Database connecting");
+			try{  
+				Thread.sleep(1500);
+				Class.forName("com.mysql.jdbc.Driver");  
+				Connection con=DriverManager.getConnection(  
+				"jdbc:mysql://localhost:3306/fpldata","root","");
+				stmt2 =con.createStatement();
+				stmt3 =con.createStatement();
+				stmt=con.createStatement();			
+				break;
+				
+			   }catch(Exception e){}
+		}  
+	}
+	
+	class ScrollPage extends Thread {
+		public void run() {
+			try {
+				 while(true) {
+			            Jscript.executeScript("window.scrollBy(0,10)", "");
+			            Thread.sleep(100);}
+			//driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			}catch(Exception ee) {ee.printStackTrace();}
+		}
+		
+	}
+	
+	class Download extends Thread {
+		String acc_no;
+		Monitor mon;
+		String fileName;
+		Date dueDate;
+		String acc;
+		String accountGroup;
+		public Download(String in,Monitor monitor,String accountGroup) {
+			acc_no = in;
+			mon=monitor;
+			this.accountGroup=accountGroup;
+		}
+		public void setDueDate(Date datein) {
+			dueDate=datein;
+		}
+		public void setAcc(String accin) {
+			acc=accin;
+		}
+		public void run() {
+			try {
+				while(true){
+					System.out.println("Download thread waiting");
+					Thread.sleep(500);
+					
+					if(!f.exists()) {
+						
+					}else {
+						fileName = dateFormat.format(new Date())+"_"+acc_no+".pdf";
+						f.renameTo(new File("C:\\FPL_Downloads\\"+fileName));
+							   srcFiles.add("C:\\FPL_Downloads\\"+fileName);
+						//driver.get("http://localhost/gdrive/FPLServer.php?insert_onefile&Ac_no="+fileName+"&accountgroup="+accountGroup);
+						//gui.textAppend("Account: "+acc+" is updated to google drive\n");
+						
+						stmt2.execute("UPDATE fpl_accounts SET Due_Date = '"+dateFormat.format(dueDate)+"' where account_no ='"+acc+"'");
+						stmt2.execute("UPDATE fpl_accounts SET Update_Date = '"+dateFormat.format(new Date())+"' where account_no ='"+acc+"'");
+					    	
+						System.out.println("Download thread complete");
+						mon.resume();
+						break;
+					}
+					
+				}
+			}catch(Exception ee) {ee.printStackTrace();}
+		}		
+	}
+	class GUI  
+	{   JTextArea area;
+	     GUI(){  
+	    	 area=new JTextArea();
+	    	 area.setEditable(false);
+	    	
+	    	 
+	    	 JScrollPane scrollableTextArea = new JScrollPane(area);
+			   scrollableTextArea.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
+			        public void adjustmentValueChanged(AdjustmentEvent e) {  
+			            e.getAdjustable().setValue(e.getAdjustable().getMaximum());  
+			        }
+			    });
+	    	 JFrame frame=new JFrame("FPL Bot is Running");
+	    	 frame.add(scrollableTextArea);
+	    	 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    	 frame.setSize(500,300);
+	    	 frame.setLocationRelativeTo(null);
+	    	 frame.setVisible(true);
+	     }
+	     public void textAppend(String stringIn) {
+	    	 area.append(stringIn);
+	     }
+	     public void textClear() {
+	    	 area.setText("");
+	     }
+	}
+	public static void main(String args[]) {new FPL_Bot();}
+}
