@@ -30,12 +30,17 @@ if ($conn->connect_error) {
 }
 $service = new Google_Service_Sheets($client);
 //echo $_GET['lastweek']."  ".$_GET['currentday'];
-$msg.= "<center><h1>Square Report</h1></center>";
-
-
-$array = array("Plaza Bistro","@theMarket");
 //$spreadsheetId = array("1AAsRSPtGJdAQWFXK0wGxUgZkqBINjUGyG-2GcE27Efo","1C4iLZmkbquOfCujmpBPrrTcIiyKHV67vn0EjjInf2YQ");
-$spreadsheetId = array("15MWKfKoJk6KVVdaEtDTcxRdiKiUfVVOXtRKtkoIXh-Y","1ywiygAudN1Sy9oahAXJq_uQDDR9LvssjNhdrf8aFGME");
+$msg.= "<center><h1>Square Report</h1></center>";
+$Acc = $_GET['acc'];
+	if ($Acc==1){
+		$array = array("Plaza Bistro","@theMarket");
+		$spreadsheetId = array("15MWKfKoJk6KVVdaEtDTcxRdiKiUfVVOXtRKtkoIXh-Y","1ywiygAudN1Sy9oahAXJq_uQDDR9LvssjNhdrf8aFGME");
+		}
+	if ($Acc==2){
+		$array = array("Village Cafe","Royal Palms La Villa Tapas Bar");
+		$spreadsheetId = array("1ptTlZ2xwomL3FHxhLyRTJAEsZAXuRStFlw80BzDCgFg","1oxrupM-NyfzOp3AL14nXrQ9eZ9rWXP6D65Y9MwTYG1w");
+		}	
 $ID = 0;
 foreach($array as $location){
 		
