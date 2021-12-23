@@ -38,15 +38,16 @@ $Acc = $_GET['acc'];
 		$spreadsheetId = array("15MWKfKoJk6KVVdaEtDTcxRdiKiUfVVOXtRKtkoIXh-Y","1ywiygAudN1Sy9oahAXJq_uQDDR9LvssjNhdrf8aFGME");
 		}
 	if ($Acc==2){
-		$array = array("Village Cafe","Royal Palms La Villa Tapas Bar");
-		$spreadsheetId = array("1ptTlZ2xwomL3FHxhLyRTJAEsZAXuRStFlw80BzDCgFg","1oxrupM-NyfzOp3AL14nXrQ9eZ9rWXP6D65Y9MwTYG1w");
+		$array = array("Village Cafe","Royal Palms La Villa Tapas Bar","Archibald’s Village Bakery");
+		$spreadsheetId = array("1ptTlZ2xwomL3FHxhLyRTJAEsZAXuRStFlw80BzDCgFg","1oxrupM-NyfzOp3AL14nXrQ9eZ9rWXP6D65Y9MwTYG1w","1cUNf1kMgpvQsGnClWtMvUj9zx0KYqE5jRazLWmfDKu0");
 		}	
 $ID = 0;
 foreach($array as $location){
 		
-		clearSheet($service, $spreadsheetId[$ID]);
+		unset($values);
+		clearSheet($service, $spreadsheetId[$ID]);	
 		
-		$sql = "SELECT DISTINCT Category FROM `square_data` where Location = '".$location."' ORDER BY Category";
+		$sql = "SELECT DISTINCT Category FROM `square_data` where Location like '".$location."' ORDER BY Category";
 		
 		$result = $conn->query($sql);
 		
@@ -65,7 +66,7 @@ foreach($array as $location){
 			
 			$category = $row["Category"];
 				
-				$sql2 = "SELECT Qty, Gross_Sales FROM `square_data` where Location = '".$location."' AND Category = '".$category."'";
+				$sql2 = "SELECT Qty, Gross_Sales FROM `square_data` where Location like '".$location."' AND Category = '".$category."'";
 				$result2 = $conn->query($sql2);
 				$Qty = 0;
 				$Sales = 0;
@@ -89,7 +90,7 @@ foreach($array as $location){
 		  }
 		  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		  		   
-			   $sql3 = "SELECT  Fees, Discounts, Tax, Tip FROM `square_transaction` where Location = '".$location."'";
+			   $sql3 = "SELECT  Fees, Discounts, Tax, Tip FROM `square_transaction` where Location like '".$location."'";
 			   $result3 = $conn->query($sql3);			   
 			   $Fees = 0;
 			   $Discounts = 0;
