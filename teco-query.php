@@ -30,8 +30,9 @@ if ($conn->connect_error) {
 }
 $service = new Google_Service_Sheets($client);
 $day = $_GET['day'];
+$acc = $_GET['acc'];
 			
-		$spreadsheetId = "1iSVSMilWr2HtjozHU4tYgfslDgmrEmgAkiq3PceR1Xo";
+		$spreadsheetId = array("1iSVSMilWr2HtjozHU4tYgfslDgmrEmgAkiq3PceR1Xo","1JNPnsfExBlF3-ZGMjXBxOXreeqjfaNSpuBkxgRhlUAw");
 		//clearSheet($service, $spreadsheetId);	
 		  $values=array(array(date("Y/m/d"),"","",""));
 		  array_push( $values,array("Account","Address","Amount_due","Due_date"));		  
@@ -65,7 +66,7 @@ $day = $_GET['day'];
 			'valueInputOption' => 'USER_ENTERED',
 			'data' => $data
 		]);		
-		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
+		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId[$acc], $body);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
 	
 
