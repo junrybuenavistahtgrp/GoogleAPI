@@ -36,10 +36,19 @@ $Acc = $_GET['acc'];
 	if ($Acc==1){
 		$array = array("Plaza Bistro","@theMarket");
 		$spreadsheetId = array("15MWKfKoJk6KVVdaEtDTcxRdiKiUfVVOXtRKtkoIXh-Y","1ywiygAudN1Sy9oahAXJq_uQDDR9LvssjNhdrf8aFGME");
+		$cate = [
+				["Wine Reserves","Sparkl / Rose","N/A Beverage","Food","Coffee","Beverages","Beer","Uncategorized"],
+				["Wine White","Wine Reserves","Wine Red","Sparkl / Rose","Retail","Health & Beauty","Groceries","Food","Candy","Beverages","Beer","Uncategorized"]
+			];
 		}
 	if ($Acc==2){
-		$array = array("Village Cafe","Royal Palms La Villa Tapas Bar","Archibald’s Village Bakery");
-		$spreadsheetId = array("1ptTlZ2xwomL3FHxhLyRTJAEsZAXuRStFlw80BzDCgFg","1oxrupM-NyfzOp3AL14nXrQ9eZ9rWXP6D65Y9MwTYG1w","1cUNf1kMgpvQsGnClWtMvUj9zx0KYqE5jRazLWmfDKu0");
+			$array = array("Village Cafe","Royal Palms La Villa Tapas Bar","Archibald’s Village Bakery");
+			$spreadsheetId = array("1ptTlZ2xwomL3FHxhLyRTJAEsZAXuRStFlw80BzDCgFg","1oxrupM-NyfzOp3AL14nXrQ9eZ9rWXP6D65Y9MwTYG1w","1cUNf1kMgpvQsGnClWtMvUj9zx0KYqE5jRazLWmfDKu0");
+			$cate = [
+				["Wine","Service Charge","N/A Beverage","Liquor","Food","Cold plates","Beverages","Beer","Uncategorized"],
+				["Wine","Special Cocktails","Seltzer","N/A Beverage","Liquor","Food","Beverages","Beer","Uncategorized"],
+				["Xmas Pre Orders","Savory","Pre-orders","Pies","Pastry","PM","Merchandise","Merch","Lunch","Loaves","Dogs","Cake - Classic","Breakfast","Bread","Beverages","AM","Uncategorized"]
+			];
 		}	
 $ID = 0;
 foreach($array as $location){
@@ -64,9 +73,15 @@ foreach($array as $location){
 		  $values=array(array("Category","Item Sold","Gross Sales","Code","Date","Number","Memo/Description","Fees","Discounts","Taxes","Tip"));
 		  
 		  while($row = $result->fetch_assoc()) {
-			
+			  		
 			$category = $row["Category"];
-				
+			
+				for ($x = 0; $x <= count($cate[$ID]); $x++) {
+				  if ($cate[$ID][$x]==$category){
+						unset($cate[$ID][$x]);		
+					} 
+				}
+								
 				$sql2 = "SELECT Qty, Gross_Sales FROM `square_data` where Location like '".$location."' AND Category = '".$category."'";
 				$result2 = $conn->query($sql2);
 				$Qty = 0;
@@ -85,9 +100,17 @@ foreach($array as $location){
 					<td>".number_format((float)$Sales, 2, '.', '')."</td>
 				  </tr>
 				 ";
-			$yesterday=date('m/d/Y',strtotime("-1 days"));	 
+			$yesterday=$_GET['date'];	 
 			//$yesterday = date_format($date,"m/d/Y"); 
 			array_push($values,array($category,$Qty,"$".number_format((float)$Sales, 2, '.', ''),get_code($category),$yesterday,$location." ".$yesterday,"To Post ".date('M Y')." Rev"));
+		  }
+		  $cate2 = array_values($cate[$ID]);
+			  echo "<br><br>----------------------";
+			  print_r($cate2);echo count($cate2);
+			  echo "<br><br>----------------------";		  
+		  $yesterday=$_GET['date'];		  
+		  foreach($cate2 as $valuecat)  {				
+				array_push($values,array($valuecat,'0',"$0.00",get_code($valuecat),$yesterday,$location." ".$yesterday,"To Post ".date('M Y')." Rev"));
 		  }
 		  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		  		   
@@ -119,7 +142,7 @@ foreach($array as $location){
 		
 
 		
-		$range = 'Sheet1!A1:K25';
+		$range = 'Sheet1!A1:K';
 		
 		print_r($values);
 		
