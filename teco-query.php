@@ -55,7 +55,7 @@ $date2 = $_GET['date2'];
 		if($day==5){
 		$range = 'Sheet1!A1:E';}
 		if($day==15){
-		$range = 'Sheet1!G1:J';}
+		$range = 'Sheet1!G1:K';}
 	
 		print_r($values);	
 		$data = [];
