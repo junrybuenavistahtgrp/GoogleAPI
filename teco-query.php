@@ -31,29 +31,31 @@ if ($conn->connect_error) {
 $service = new Google_Service_Sheets($client);
 $day = $_GET['day'];
 $acc = $_GET['acc'];
+$date = $_GET['date'];
+$date2 = $_GET['date2'];
 			
 		$spreadsheetId = array("1iSVSMilWr2HtjozHU4tYgfslDgmrEmgAkiq3PceR1Xo","1JNPnsfExBlF3-ZGMjXBxOXreeqjfaNSpuBkxgRhlUAw");
 		//clearSheet($service, $spreadsheetId);	
-		  $values=array(array(date("Y/m/d"),"","",""));
-		  array_push( $values,array("Account","Address","Amount_due","Due_date"));		  
+		  $values=array(array($date2,"","",""));
+		  array_push( $values,array("Account","Address","Amount_due","Due_date","Date"));		  
 		  	
 				$sql = "SELECT * FROM `teco_data`";
 				$result = $conn->query($sql);	
 				while($row = $result->fetch_assoc()) {
 						if($day==5){
 							if($row["acc"] != '221000071805')
-							array_push($values,array($row["acc"],$row["address"],$row["amount_due"],$row["due_date"],));
+							array_push($values,array($row["acc"],$row["address"],$row["amount_due"],$row["due_date"],$date));
 						}
 						if($day==15){
 							if($row["acc"] == '221000071805')
-							array_push($values,array($row["acc"],$row["address"],$row["amount_due"],$row["due_date"],));
+							array_push($values,array($row["acc"],$row["address"],$row["amount_due"],$row["due_date"],$date));
 						}
 					}
 					
 		if($day==5){
-		$range = 'Sheet1!A1:D';}
+		$range = 'Sheet1!A1:E';}
 		if($day==15){
-		$range = 'Sheet1!F1:I';}
+		$range = 'Sheet1!G1:J';}
 	
 		print_r($values);	
 		$data = [];
