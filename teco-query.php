@@ -44,11 +44,12 @@ $date2 = $_GET['date2'];
 				while($row = $result->fetch_assoc()) {
 						if($day==5){
 							if($row["acc"] != '221000071805')
-							array_push($values,array($row["acc"],$row["address"],$row["amount_due"],$row["due_date"],$date));
+							array_push($values,array($row["acc"],$row["address"],preg_replace("/[^0-9.]/", "", $row["amount_due"]),$row["due_date"],$date));
+							
 						}
 						if($day==15){
 							if($row["acc"] == '221000071805')
-							array_push($values,array($row["acc"],$row["address"],$row["amount_due"],$row["due_date"],$date));
+							array_push($values,array($row["acc"],$row["address"],preg_replace("/[^0-9.]/", "", $row["amount_due"]),$row["due_date"],$date));
 						}
 					}
 					
