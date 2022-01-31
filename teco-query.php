@@ -71,41 +71,7 @@ $date2 = $_GET['date2'];
 		]);		
 		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId[$acc], $body);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
-		
-		updateFormat($service, $spreadsheetId)
-
-function updateFormat($service, $spreadsheetID){
-	$format_requests = array();
-
-	$format_requests[] =  
-	 [
-         [
-            "repeatCell" => [
-               "range" => [
-                  "sheetId" => 0,
-				  "startRowIndex" => 1,
-				  //"endRowIndex" => 3,
-				  "startColumnIndex" => 3,
-				  "endColumnIndex" => 4				  
-               ], 
-               "cell" => [
-                     "userEnteredFormat" => [
-                        "numberFormat" => [
-                           "type" => "NUMBER",
-						   "pattern" => "#,##0.00"
-                        ] 
-                     ] 
-                  ], 
-               "fields" => "userEnteredFormat.numberFormat" 
-            ] 
-         ] 
-      ]; 
-
-
-
-$format = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array('requests' => $format_requests));
-$format_result = $service->spreadsheets->batchUpdate($spreadsheetID, $format);
-}
+	
 
 function clearSheet($service, $spreadsheetID = 0){
 $request = new \Google_Service_Sheets_UpdateCellsRequest([
