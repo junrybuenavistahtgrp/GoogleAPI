@@ -32,8 +32,10 @@ $date = $_GET['date'];
 
 $service = new Google_Service_Sheets($client);
 			
-		$spreadsheetId = array("11MmGBoyfAz7Ot3sHPvomoQy8aowoxzZuA0-M041RGHw");
-		clearSheet($service, $spreadsheetId);	
+		$spreadsheetId = "11MmGBoyfAz7Ot3sHPvomoQy8aowoxzZuA0-M041RGHw";
+		clearSheet($service, $spreadsheetId);
+		
+		
 		
 		 $values = array(array("Account_Group","Account","Address","Amount_due","Due_date","Date"));		  
 		  	
@@ -41,7 +43,7 @@ $service = new Google_Service_Sheets($client);
 				$result = $conn->query($sql);	
 				while($row = $result->fetch_assoc()) {
 							$date_due=date_create($row["Due_Date"]);
-							array_push($values,array($row["Account_Group"],$row["Account_no"],$row["address"],preg_replace("/[^0-9.]/", "", $row["amount_due"]),date_format($date_due,"m/d/Y"),$date));
+							array_push($values,array($row["Account_Group"],$row["Account_no"],$row["address"],number_format((float)preg_replace("/[^0-9.]/", "", $row["amount_due"]), 2, '.', ''),date_format($date_due,"m/d/Y"),$date));
 					}
 					
 		$range = 'Sheet1!A1:F';
@@ -59,23 +61,88 @@ $service = new Google_Service_Sheets($client);
 		]);		
 		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
-	
+		
+		updateFormat($service, $spreadsheetId);
+		boldHeader($service, $spreadsheetId);
 
 function clearSheet($service, $spreadsheetID = 0){
-$request = new \Google_Service_Sheets_UpdateCellsRequest([
-    'updateCells' => [ 
-        'range' => [
-            'sheetId' => 0 
-        ],
-        'fields' => "*" //clears everything
-    ]
-  ]);
-$requests[] = $request;
+	$request = new \Google_Service_Sheets_UpdateCellsRequest([
+		'updateCells' => [ 
+			'range' => [
+				'sheetId' => 0 
+			],
+			'fields' => "*" //clears everything
+		]
+	  ]);
+	$requests[] = $request;
 
-$requestBody = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest();
-$requestBody->setRequests($requests);
-$response = $service->spreadsheets->batchUpdate($spreadsheetID, $requestBody);
-return $response;
+	$requestBody = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest();
+	$requestBody->setRequests($requests);
+	$response = $service->spreadsheets->batchUpdate($spreadsheetID, $requestBody);
+	return $response;
+}
+
+function updateFormat($service, $spreadsheetID){
+	$format_requests = array();
+
+	$format_requests[] =  
+	 [
+         [
+            "repeatCell" => [
+               "range" => [
+                  "sheetId" => 0,
+				  "startRowIndex" => 1,
+				  //"endRowIndex" => 3,
+				  "startColumnIndex" => 3,
+				  "endColumnIndex" => 4				  
+               ], 
+               "cell" => [
+                     "userEnteredFormat" => [
+                        "numberFormat" => [
+                           "type" => "NUMBER",
+						   "pattern" => "#,##0.00"
+                        ] 
+                     ] 
+                  ], 
+               "fields" => "userEnteredFormat.numberFormat" 
+            ] 
+         ] 
+      ]; 
+
+
+
+$format = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array('requests' => $format_requests));
+$format_result = $service->spreadsheets->batchUpdate($spreadsheetID, $format);
+}
+
+function boldHeader($service, $spreadsheetID){
+	$format_requests = array();
+
+	$format_requests[] =  
+	 [
+         [
+            "repeatCell" => [
+               "range" => [
+                  "sheetId" => 0, 
+                  "startRowIndex" => 0, 
+                  "endRowIndex" => 1 
+               ], 
+               "cell" => [
+                     "userEnteredFormat" => [
+                        "textFormat" => [
+                           "bold" => true 
+                        ] 
+                     ] 
+                  ], 
+               "fields" => "userEnteredFormat.textFormat.bold" 
+            ] 
+         ] 
+      ]; 
+
+
+
+$format = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array('requests' => $format_requests));
+$format_result = $service->spreadsheets->batchUpdate($spreadsheetID, $format);
 }
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////

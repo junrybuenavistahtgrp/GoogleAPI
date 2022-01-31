@@ -6,5 +6,7 @@
 	 echo str_replace("$","","$$$(14.00)")."<br>";
 	 
 	 $date=date_create("2022-01-2");
-echo date_format($date,"m/d/Y");
+echo date_format($date,"m/d/Y")."<br>";
+
+echo number_format((float)'1703', 2, '.', '')
 ?>
