@@ -40,8 +40,8 @@ $service = new Google_Service_Sheets($client);
 				$sql = "SELECT * FROM `fpl_accounts`";
 				$result = $conn->query($sql);	
 				while($row = $result->fetch_assoc()) {
-					
-							array_push($values,array($row["Account_Group"],$row["Account_no"],$row["address"],preg_replace("/[^0-9.]/", "", $row["amount_due"]),date_format($row["Due_Date"],"m/d/Y"),$date));
+							$date_due=date_create($row["Due_Date"]);
+							array_push($values,array($row["Account_Group"],$row["Account_no"],$row["address"],preg_replace("/[^0-9.]/", "", $row["amount_due"]),date_format($date_due,"m/d/Y"),$date));
 					}
 					
 		$range = 'Sheet1!A1:F';
