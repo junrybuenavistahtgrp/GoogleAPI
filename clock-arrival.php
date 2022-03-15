@@ -71,11 +71,13 @@ $service = new Google_Service_Sheets($client);
 				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Total!A1:D', $requestBody);		
 				$values2=array(array("Hotel","Folio Number","Stay Date","Balance"));
 				$index = 0;
+				$totalfol = 0;
 				foreach($hotels as $value){
 					array_push($values2,array($value,$totals[$index],$totals[$index],$totals[$index]));
+					$totalfol = $totalfol + $totals[$index];
 					$index = $index + 1;
 				}
-				
+				array_push($values2,array("Total",$totalfol,$totalfol,$totalfol));
 				$range = 'Total!A1:D';
 				
 				print_r($values);	
