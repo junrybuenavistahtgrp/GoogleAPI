@@ -34,6 +34,7 @@ $service = new Google_Service_Sheets($client);
 		$spreadsheetId = "1WdWRkSTRVB0f7kq_95LE8SP8hRq-9VSHhZpUJIomy8w";
 		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
 		$totals = array();
+		$balanceTotal2=array();
 		foreach($hotels as $value){
 		
 				$requestBody = new Google_Service_Sheets_ClearValuesRequest();
@@ -42,13 +43,17 @@ $service = new Google_Service_Sheets($client);
 						$sql = "SELECT * FROM `arrival` where Hotel='".$value."'";
 						$result = $conn->query($sql);
 						$countTotal=0;
+						$balanceTotal=0;
 						while($row = $result->fetch_assoc()) {
 									
+									$balanceTotal += preg_replace("/[^0-9.]/", "", $row["balance"]);
 									array_push($values,array($row["folio_number"],$row["stay_date"],$row["balance"]));
 									$countTotal = $countTotal + 1;
 							}
 						array_push($totals,$countTotal);		
-				
+						array_push($values,array("","",number_format($balanceTotal,2)." USD"));
+						array_push($balanceTotal2,number_format($balanceTotal,2)." USD");
+						
 				$range = $value.'!A1:D';
 				
 				print_r($values);	
@@ -72,12 +77,14 @@ $service = new Google_Service_Sheets($client);
 				$values2=array(array("Hotel","Folio Number","Stay Date","Balance"));
 				$index = 0;
 				$totalfol = 0;
+				$balanceTotal3=0;
 				foreach($hotels as $value){
-					array_push($values2,array($value,$totals[$index],$totals[$index],$totals[$index]));
+					$balanceTotal3 += preg_replace("/[^0-9.]/", "", $balanceTotal2[$index]);
+					array_push($values2,array($value,$totals[$index],$totals[$index],$balanceTotal2[$index]));
 					$totalfol = $totalfol + $totals[$index];
 					$index = $index + 1;
 				}
-				array_push($values2,array("Total",$totalfol,$totalfol,$totalfol));
+				array_push($values2,array("Total",$totalfol,$totalfol,number_format($balanceTotal3,2)." USD"));
 				$range = 'Total!A1:D';
 				
 				print_r($values);	
