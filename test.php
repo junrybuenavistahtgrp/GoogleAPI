@@ -8,5 +8,11 @@
 	 $date=date_create("2022-01-2");
 echo date_format($date,"m/d/Y")."<br>";
 
-echo number_format((float)'1703', 2, '.', '')
+echo number_format((float)'1703', 2, '.', '');
+
+$totals = array();
+array_push($totals,4);
+array_push($totals,5);
+print_r($totals);
+echo $totals[0];
 ?>

@@ -33,7 +33,7 @@ $service = new Google_Service_Sheets($client);
 			
 		$spreadsheetId = "1WdWRkSTRVB0f7kq_95LE8SP8hRq-9VSHhZpUJIomy8w";
 		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
-		
+		$totals = array();
 		foreach($hotels as $value){
 		
 				$requestBody = new Google_Service_Sheets_ClearValuesRequest();
@@ -41,12 +41,14 @@ $service = new Google_Service_Sheets($client);
 				$values=array(array("Folio Number","Stay Date","Balance"));
 						$sql = "SELECT * FROM `arrival` where Hotel='".$value."'";
 						$result = $conn->query($sql);
-						
+						$countTotal=0;
 						while($row = $result->fetch_assoc()) {
 									
 									array_push($values,array($row["folio_number"],$row["stay_date"],$row["balance"]));
-							}			
-				boldHeader($service, $spreadsheetId);
+									$countTotal = $countTotal + 1;
+							}
+						array_push($totals,$countTotal);		
+				
 				$range = $value.'!A1:D';
 				
 				print_r($values);	
@@ -63,55 +65,36 @@ $service = new Google_Service_Sheets($client);
 				$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
 				printf("%d cells updated.", $result->getTotalUpdatedCells());
 		}
+			print_r($totals);
+			echo "ggggggggggggggggggggggggggg";
+			$requestBody = new Google_Service_Sheets_ClearValuesRequest();
+				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Total!A1:D', $requestBody);		
+				$values2=array(array("Hotel","Folio Number","Stay Date","Balance"));
+				$index = 0;
+				foreach($hotels as $value){
+					array_push($values2,array($value,$totals[$index],$totals[$index],$totals[$index]));
+					$index = $index + 1;
+				}
+				
+				$range = 'Total!A1:D';
+				
+				print_r($values);	
+				$data = [];
+				$data[] = new Google_Service_Sheets_ValueRange([
+					'range' => $range,
+					'values' => $values2
+				]);	
+				// Additional ranges to update ...
+				$body = new Google_Service_Sheets_BatchUpdateValuesRequest([
+					'valueInputOption' => 'USER_ENTERED',
+					'data' => $data
+				]);		
+				$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
+				printf("%d cells updated.", $result->getTotalUpdatedCells());	
+
+
+
 	
-
-function boldHeader($service, $spreadsheetID){
-	$format_requests = array();
-
-	$format_requests[] =  
-	 [
-         [
-            "repeatCell" => [
-               "range" => [
-                  "sheetId" => 0, 
-                  "startRowIndex" => 0, 
-                  "endRowIndex" => 1 
-               ], 
-               "cell" => [
-                     "userEnteredFormat" => [
-                        "textFormat" => [
-                           "bold" => true 
-                        ] 
-                     ] 
-                  ], 
-               "fields" => "userEnteredFormat.textFormat.bold" 
-            ] 
-         ] 
-      ]; 
-
-
-
-$format = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest(array('requests' => $format_requests));
-$format_result = $service->spreadsheets->batchUpdate($spreadsheetID, $format);
-}
-
-function clearSheet($service, $spreadsheetID = 0){
-$request = new \Google_Service_Sheets_UpdateCellsRequest([
-    'updateCells' => [ 
-        'range' => [
-            'sheetId' => 0 
-        ],
-        'fields' => "*" //clears everything
-    ]
-  ]);
-$requests[] = $request;
-
-$requestBody = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest();
-$requestBody->setRequests($requests);
-$response = $service->spreadsheets->batchUpdate($spreadsheetID, $requestBody);
-return $response;
-}
-		
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
 echo $msg;
 
