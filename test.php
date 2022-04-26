@@ -15,4 +15,14 @@ array_push($totals,4);
 array_push($totals,5);
 print_r($totals);
 echo $totals[0];
+echo "<br><br>";
+
+$var = preg_replace("/\([^)]+\)/","","15 Mar 2022 (Fri)");
+$date = str_replace('/', '-', $var);
+echo date('Y-m-d', strtotime($date));
+echo "<br><br>";
+echo $datecheck = date('d', strtotime($date));
+
+if((int)$datecheck == 15){echo "yes";}
+
 ?>

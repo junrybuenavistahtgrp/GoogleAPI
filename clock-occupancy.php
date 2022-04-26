@@ -61,9 +61,54 @@ $service = new Google_Service_Sheets($client);
 							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));
 							//array_push($values,array($row["	Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));			
 					}
-				array_push($values,array("Total",$dates,$capacity,$oos,$booked_rooms,"",$occupancy,number_format((float)($occupancy/$capacity)*100, 1, '.', '')." %",number_format($charges,2)." USD",$adr,$revpar,$bednights));	
+				array_push($values,array("Total",$dates,$capacity,$oos,$booked_rooms,"",$occupancy,number_format((float)($occupancy/$capacity)*100, 1, '.', '')." %",number_format($charges,2)." USD",$adr,$revpar,$bednights));
 		boldHeader($service, $spreadsheetId);
 		$range = 'Sheet1!A1:L';
+		
+		print_r($values);	
+		$data = [];
+		$data[] = new Google_Service_Sheets_ValueRange([
+			'range' => $range,
+			'values' => $values
+		]);	
+		// Additional ranges to update ...
+		$body = new Google_Service_Sheets_BatchUpdateValuesRequest([
+			'valueInputOption' => 'USER_ENTERED',
+			'data' => $data
+		]);		
+		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
+		printf("%d cells updated.", $result->getTotalUpdatedCells());
+
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		$var = preg_replace("/\([^)]+\)/","",$dates);
+		$datetotal = str_replace('/', '-', $var);
+		$datetotal2 = date('Y-m-d', strtotime($datetotal));
+		
+		$datecheck = date('d', strtotime($datetotal));
+		if((int)$datecheck == 1){
+			$conn->query("DELETE FROM `total_report`");
+		}
+		
+		$conn->query("DELETE FROM total_report
+					  WHERE Dates = '".$datetotal2."'");
+
+		$conn->query("INSERT INTO total_report (Dates, Capacity, OOS,Booked_rooms,Booked_percent,Occupancy,Occupancy_percent,Charges,ADR,RevPAR,Bednights) 
+			    VALUES ('".$datetotal2."', '".$capacity."', '".$oos."', '".$booked_rooms."', '', '".$occupancy."', '".number_format((float)($occupancy/$capacity)*100, 1, '.', '')." %', '".number_format($charges,2)." USD', '".$adr."', '".$revpar."', '".$bednights."')");
+		
+		
+		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
+				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Sheet2!A1:L', $requestBody);	
+		
+		$values=array(array("Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
+		$sql = "SELECT * FROM `total_report`";
+		$result = $conn->query($sql);
+		
+				while($row = $result->fetch_assoc()) {					
+							array_push($values,array($row["Dates"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));					
+					}
+		
+		boldHeader($service, $spreadsheetId);
+		$range = 'Sheet2!A1:L';
 		
 		print_r($values);	
 		$data = [];
