@@ -80,6 +80,58 @@ $service = new Google_Service_Sheets($client);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		$values=array(array("Hotel","Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
+		$sql = "SELECT * FROM `occupancy_5days`";
+		$result = $conn->query($sql);
+		
+				while($row = $result->fetch_assoc()) {					
+							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));					
+					}	
+		boldHeader($service, $spreadsheetId);
+		$range = '5days Total!A1:L';
+		
+		print_r($values);	
+		$data = [];
+		$data[] = new Google_Service_Sheets_ValueRange([
+			'range' => $range,
+			'values' => $values
+		]);	
+		// Additional ranges to update ...
+		$body = new Google_Service_Sheets_BatchUpdateValuesRequest([
+			'valueInputOption' => 'USER_ENTERED',
+			'data' => $data
+		]);		
+		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
+		printf("%d cells updated.", $result->getTotalUpdatedCells());
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		$values=array(array("Hotel","Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
+		$sql = "SELECT * FROM `occupancy_1year`";
+		$result = $conn->query($sql);
+		
+				while($row = $result->fetch_assoc()) {					
+							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));					
+					}	
+		boldHeader($service, $spreadsheetId);
+		$range = '1 Year Total!A1:L';
+		
+		print_r($values);	
+		$data = [];
+		$data[] = new Google_Service_Sheets_ValueRange([
+			'range' => $range,
+			'values' => $values
+		]);	
+		// Additional ranges to update ...
+		$body = new Google_Service_Sheets_BatchUpdateValuesRequest([
+			'valueInputOption' => 'USER_ENTERED',
+			'data' => $data
+		]);		
+		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
+		printf("%d cells updated.", $result->getTotalUpdatedCells());
+		
+		
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$var = preg_replace("/\([^)]+\)/","",$dates);
 		$datetotal = str_replace('/', '-', $var);
 		$datetotal2 = date('Y-m-d', strtotime($datetotal));
