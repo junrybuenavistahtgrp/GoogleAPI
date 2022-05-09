@@ -153,18 +153,10 @@ $service = new Google_Service_Sheets($client);
 							
 					
 					while($row = $result->fetch_assoc()) {
-							$capacity += $row["Capacity"];
-							$oos += $row["OOS"];
-							$booked_rooms += $row["Booked_rooms"];
-							$occupancy += $row["Occupancy"];
-							$charges += preg_replace("/[^0-9.]/", "", $row["Charges"]);
-							$adr += $row["ADR"];
-							$revpar += $row["RevPAR"];
-							$bednights += $row["Bednights"];
-							$dates = $row["Date"];	
+							
 							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));					
 						}
-			array_push($values,array("Total",$dates,$capacity,$oos,$booked_rooms,"",$occupancy,number_format((float)($occupancy/$capacity)*100, 1, '.', '')." %",number_format($charges,2)." USD",$adr,$revpar,$bednights));			
+			
 			array_push($values,array("","","","","","","","","","","",""));			
 		}
 		boldHeader($service, $spreadsheetId);
