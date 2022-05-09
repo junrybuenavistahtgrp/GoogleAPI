@@ -130,14 +130,43 @@ $service = new Google_Service_Sheets($client);
 		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
 				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Sheet1!A1:L', $requestBody);
 		
+		$Hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
 		clearSheet($service, $spreadsheetId);
 		$values=array(array("Hotel","Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
-		$sql = "SELECT * FROM `occupancy_5days`";
-		$result = $conn->query($sql);
 		
-				while($row = $result->fetch_assoc()) {					
+		$capacity = 0;
+				$oos = 0;
+				$booked_rooms = 0;
+				$occupancy = 0;
+				$charges = 0;
+				$adr = 0;
+				$revpar = 0;
+				$bednights = 0;
+				$dates;
+		
+		foreach($Hotels as $Hotelc){
+			
+			
+			
+			$sql = "SELECT * FROM `occupancy_5days` where Hotel='".$Hotelc."'";
+			$result = $conn->query($sql);
+							
+					
+					while($row = $result->fetch_assoc()) {
+							$capacity += $row["Capacity"];
+							$oos += $row["OOS"];
+							$booked_rooms += $row["Booked_rooms"];
+							$occupancy += $row["Occupancy"];
+							$charges += preg_replace("/[^0-9.]/", "", $row["Charges"]);
+							$adr += $row["ADR"];
+							$revpar += $row["RevPAR"];
+							$bednights += $row["Bednights"];
+							$dates = $row["Date"];	
 							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));					
-					}	
+						}
+			array_push($values,array("Total",$dates,$capacity,$oos,$booked_rooms,"",$occupancy,number_format((float)($occupancy/$capacity)*100, 1, '.', '')." %",number_format($charges,2)." USD",$adr,$revpar,$bednights));			
+			array_push($values,array("","","","","","","","","","","",""));			
+		}
 		boldHeader($service, $spreadsheetId);
 		$range = 'Sheet1!A1:L';
 		
