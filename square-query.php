@@ -54,6 +54,7 @@ $ID = 0;
 foreach($array as $location){
 		
 		unset($values);
+		//test
 		clearSheet($service, $spreadsheetId[$ID]);	
 		
 		$sql = "SELECT DISTINCT Category FROM `square_data` where Location like '".$location."' ORDER BY Category";
