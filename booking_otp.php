@@ -24,7 +24,7 @@ if ($error) {
   echo $response;
   echo "<br><br>";
   $data = json_decode($response, TRUE);
-  print_r($data);
+ 
   echo "<br><br>";
   print_r($data['inbounds'][0]['body']);
   echo "<br><br>";
