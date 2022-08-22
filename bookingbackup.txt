@@ -1,0 +1,227 @@
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.Proxy;
+import org.openqa.selenium.Proxy.ProxyType;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import okhttp3.Cookie;
+
+
+
+public class Bot extends Thread{
+	WebDriver driver;
+	Statement st;
+	JTextArea area;
+	DateTimeFormatter dtf;
+    LocalTime localTime;
+    boolean clearCock=false;
+    boolean back=false;
+    public Bot(JTextArea area) {
+		//setDataBaseConnection();
+		this.area=area;
+		    
+	}
+    public void setBrowser2() {
+    	System.setProperty("webdriver.gecko.driver","C:\\Jars\\geckodriver.exe");
+    	driver = new FirefoxDriver(); //Creating an object of FirefoxDriver
+    	driver.manage().deleteAllCookies();
+    	driver.manage().timeouts().pageLoadTimeout(40, TimeUnit.SECONDS);
+    	driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    	try {
+			Thread.sleep(10000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+    }
+    public void setBrowser() {		
+		System.setProperty("webdriver.chrome.driver", "C:\\Jars\\chromedriver.exe");		
+		HashMap<String,Object> chromePrefs = new HashMap<String, Object>();
+		chromePrefs.put("plugins.always_open_pdf_externally", true);
+		//chromePrefs.put("excludeSwitches", "enable-popup-blocking");		
+			
+	
+		
+		DesiredCapabilities caps = new DesiredCapabilities();
+
+		ChromeOptions options = new ChromeOptions();
+		//Map<String, Object> prefs = new HashMap<String, Object>();
+		//Map<String, Object> profile = new HashMap<String, Object>();
+		//Map<String, Object> contentSettings = new HashMap<String, Object>();
+
+		//contentSettings.put("cookies",2);
+		//profile.put("managed_default_content_settings",contentSettings);
+		//prefs.put("profile",profile);
+		//options.setExperimentalOption("prefs",prefs);
+		//caps.setCapability(ChromeOptions.CAPABILITY,options);
+		
+		driver = new ChromeDriver(options);
+		driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+		
+		
+	}
+    public void textAppend(String stringIn) {
+      	 area.append(stringIn);
+       }	
+    public void Login(String user,String pass) {  			
+    	setBrowser();
+	  
+		textAppend("Login starting");
+		//driver.manage().window().maximize();
+		String otp="";
+		while(true) {
+		if(back==false) {	
+			driver.get("https://admin.booking.com");
+		}
+		if(clearCock==true) {
+			driver.manage().deleteAllCookies();
+			try {
+				Thread.sleep(5000);			
+			}catch(Exception ee) {ee.printStackTrace();}
+		}
+		
+		driver.switchTo().defaultContent();
+		
+		try {
+			Thread.sleep(5000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/form/div[1]/div/div/div/input")).sendKeys(user);
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/form/div[3]/button")).click();
+		try {
+			Thread.sleep(2000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/form/div/div/div/div/input")).sendKeys(pass);
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/form/button")).click();
+		try {
+			Thread.sleep(7000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		
+			if(driver.findElements(By.cssSelector("#px-captcha")).size() != 0) {			
+				 clearCock=true;
+				 continue;			
+			}
+				
+		
+				
+		
+		try {
+			Thread.sleep(2000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div[2]/a[1]/div/div[2]")).click();
+		
+		try {
+			Thread.sleep(2000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div[2]/div/div/select/option[2]")).click();
+		WebElement matchs = driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div[2]/div/div/select/option[2]"));
+		String numbe = matchs.getText();			
+		System.out.println(numbe);
+		if(numbe.equalsIgnoreCase("+19*****7722")) {
+			driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div[2]/div/div/select/option[3]")).click();	
+		}
+		try {
+			Thread.sleep(2000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div[3]/button")).click();
+		try {
+			Thread.sleep(10000);			
+		}catch(Exception ee) {ee.printStackTrace();}		
+		
+		
+		((JavascriptExecutor) driver).executeScript("window.open('http://localhost/googleAPI/booking_otp.php')");
+		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+		driver.switchTo().window(tabs.get(1));
+		
+		try {
+			Thread.sleep(2000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		
+		matchs = driver.findElement(By.xpath("/html/body/h3"));
+		otp = matchs.getText();
+		
+		try {
+			Thread.sleep(2000);			
+		}catch(Exception ee) {ee.printStackTrace();}	
+		driver.close();
+		driver.switchTo().window(tabs.get(0));
+		try {
+			Thread.sleep(3000);			
+		}catch(Exception ee) {ee.printStackTrace();}
+		
+		if(driver.findElements(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div/div/div/div[2]/a")).size() != 0) {
+			driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div/div/div/div[2]/a")).click();
+			back=true;
+			clearCock=false;
+			try {
+				Thread.sleep(3000);			
+			}catch(Exception ee) {ee.printStackTrace();}
+			
+			continue;
+		}
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/form/div[1]/div/div/div/div/input")).sendKeys(otp);
+		driver.findElement(By.xpath("/html/body/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/form/div[2]/button")).click();   
+		}
+		
+		
+		
+		
+		//driver.get("https://sky-us2.clock-software.com/77801/12036/reports");
+	}	
+    public void run() {
+    	Login("helix247","BookingGood88go!");	
+    	//setBrowser();
+    	//driver.get("https://whatismyipaddress.com/");
+     // while(true) {
+    	//try {  
+    	//  	Login("helix247","BookingGood88go!");
+    	 // 	break;
+    	//}catch(Exception ee) {ee.printStackTrace();driver.quit();}  	
+      //}
+      	
+		
+    }
+    
+    public void setDataBaseConnection() {
+		while(true) {
+			System.out.println("Database connecting");
+			
+			try{  
+				Thread.sleep(1500);
+				Class.forName("com.mysql.jdbc.Driver");  
+				Connection con=DriverManager.getConnection(  
+				"jdbc:mysql://localhost:3306/clock_report","root","");  	
+				 st=con.createStatement();
+				 break;			
+			   }catch(Exception e){}
+		}
+	}
+
+}
