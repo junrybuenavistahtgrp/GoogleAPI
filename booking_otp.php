@@ -29,6 +29,6 @@ if ($error) {
   print_r($data['inbounds'][0]['body']);
   echo "<br><br>";
   $myarray = explode(' ', $data['inbounds'][0]['body']);
-  echo $myarray[17];
+  echo "<h3 id='otp'>".preg_replace('/\D/', '', $myarray[17])."</h3>";
 }
 ?>
