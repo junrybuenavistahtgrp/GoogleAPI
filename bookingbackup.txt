@@ -225,3 +225,18 @@ public class Bot extends Thread{
 	}
 
 }
+public String check(String in) {
+		String ret="";
+		StringTokenizer tok= new StringTokenizer(in,"'");
+		int index= tok.countTokens();
+		System.out.println(index);
+		int pos= 1;
+		while(tok.hasMoreTokens()) {
+		    if(pos==index)
+		    	ret+=tok.nextToken();
+		    else
+		    	ret+=tok.nextToken()+"''";
+		    pos++;
+		}
+		return ret;
+	}
