@@ -31,30 +31,22 @@ if ($conn->connect_error) {
 $service = new Google_Service_Sheets($client);
 
 			
-		$spreadsheetId = "1WdWRkSTRVB0f7kq_95LE8SP8hRq-9VSHhZpUJIomy8w";
+		$spreadsheetId = "1411DbG7TFk6-zIalztVG67idvJY9y2owNb6uxyJnBgc";
 		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
+		//$hotels = array("Aqua Hotel");
 		$totals = array();
 		$balanceTotal2=array();
 		foreach($hotels as $value){
 		
 				$requestBody = new Google_Service_Sheets_ClearValuesRequest();
 				$response = $service->spreadsheets_values->clear($spreadsheetId, $value.'!A1:D', $requestBody);		
-				$values=array(array("Folio Number","Stay Date","Balance"));
-						$sql = "SELECT * FROM `arrival` where Hotel='".$value."'";
-						$result = $conn->query($sql);
-						$countTotal=0;
-						$balanceTotal=0;
-						while($row = $result->fetch_assoc()) {
-									
-									$balanceTotal += preg_replace("/[^0-9.]/", "", $row["balance"]);
-									array_push($values,array($row["folio_number"],$row["stay_date"],$row["balance"]));
-									$countTotal = $countTotal + 1;
-							}
-						array_push($totals,$countTotal);		
-						array_push($values,array("","",number_format($balanceTotal,2)." USD"));
-						array_push($balanceTotal2,number_format($balanceTotal,2)." USD");
-						
-				$range = $value.'!A1:D';
+				$values=array(array("Number","Reference Number","Arrival","Departure","Stay","Guest name","Room charges","Other charges","Total charges","Balance","Marketing channel"));
+						$sql = "SELECT * FROM `advance_search` where hotel_name='".$value."'";
+						$result = $conn->query($sql);					
+						while($row = $result->fetch_assoc()) {													
+									array_push($values,array($row["num"],$row["ref_num"],$row["arr"],$row["def"],$row["stay"],$row["guest"],$row["room_char"],$row["other_char"],$row["total_char"],$row["balance"],$row["marketing"]));									
+							}											
+				$range = $value.'!A1:K';
 				
 				print_r($values);	
 				$data = [];
@@ -70,37 +62,7 @@ $service = new Google_Service_Sheets($client);
 				$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
 				printf("%d cells updated.", $result->getTotalUpdatedCells());
 		}
-			print_r($totals);
-			echo "ggggggggggggggggggggggggggg";
-			$requestBody = new Google_Service_Sheets_ClearValuesRequest();
-				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Total!A1:D', $requestBody);		
-				$values2=array(array("Hotel","Folio Number","Stay Date","Balance"));
-				$index = 0;
-				$totalfol = 0;
-				$balanceTotal3=0;
-				foreach($hotels as $value){
-					$balanceTotal3 += preg_replace("/[^0-9.]/", "", $balanceTotal2[$index]);
-					array_push($values2,array($value,$totals[$index],$totals[$index],$balanceTotal2[$index]));
-					$totalfol = $totalfol + $totals[$index];
-					$index = $index + 1;
-				}
-				array_push($values2,array("Total",$totalfol,$totalfol,number_format($balanceTotal3,2)." USD"));
-				$range = 'Total!A1:D';
-				
-				print_r($values);	
-				$data = [];
-				$data[] = new Google_Service_Sheets_ValueRange([
-					'range' => $range,
-					'values' => $values2
-				]);	
-				// Additional ranges to update ...
-				$body = new Google_Service_Sheets_BatchUpdateValuesRequest([
-					'valueInputOption' => 'USER_ENTERED',
-					'data' => $data
-				]);		
-				$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
-				printf("%d cells updated.", $result->getTotalUpdatedCells());	
-
+			
 
 
 	
