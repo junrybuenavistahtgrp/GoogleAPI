@@ -35,6 +35,7 @@ $date = $_GET['date'];
 $date2 = $_GET['date2'];
 			
 		$spreadsheetId = array("1iSVSMilWr2HtjozHU4tYgfslDgmrEmgAkiq3PceR1Xo","1JNPnsfExBlF3-ZGMjXBxOXreeqjfaNSpuBkxgRhlUAw");
+		//$spreadsheetId = array("1Nt43WOKANce_J7MCW82qCCN8V-xYyZ6Uju-nDo3d12I","1OunJ6p8vFNwAfsGfaG0m_ZK6dFNZ2X1MQ3BwIT56Hy4");
 		//clearSheet($service, $spreadsheetId);	
 		  $values=array(array($date2,"","",""));
 		  array_push( $values,array("Account","Address","Amount_due","Due_date","Date"));		  
