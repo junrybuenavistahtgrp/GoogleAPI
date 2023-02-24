@@ -126,7 +126,7 @@ $service = new Google_Service_Sheets($client);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
 		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		
-		$spreadsheetId = "1R83VGKq-255Ku6YLetYwnHitxMZDUpOTV5YinUxEMpE";
+		$spreadsheetId = "1R83VGKq-255Ku6YLetYwnHitxMZDUpOTV5YinUxEMpE";	
 		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
 				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Sheet1!A1:L', $requestBody);
 		
@@ -143,6 +143,13 @@ $service = new Google_Service_Sheets($client);
 				$revpar = 0;
 				$bednights = 0;
 				$dates;
+				$couter=0;
+				
+				$capacity2 = 0;
+				$oos2 = 0;
+				$booked_rooms2 = 0;
+				$occupancy2 = 0;
+				$bednights2 = 0;
 		
 		foreach($Hotels as $Hotelc){
 			
@@ -153,12 +160,25 @@ $service = new Google_Service_Sheets($client);
 							
 					
 					while($row = $result->fetch_assoc()) {
-							
-							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));					
+							$couter+=1;
+							if($couter==6){
+								
+								$capacity2 += $row["Capacity"];
+								$oos2 += $row["OOS"];
+								$booked_rooms2 += $row["Booked_rooms"];
+								$occupancy2 += $row["Occupancy"];
+								$bednights2 += $row["Bednights"];
+								$couter = 0;
+								
+							}
+							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));
 						}
 			
-			array_push($values,array("","","","","","","","","","","",""));			
+					array_push($values,array("","","","","","","","","","","",""));		
 		}
+		array_push($values,array("Total","",$capacity2,$oos2,$booked_rooms2,"",$occupancy2,"","","","",$bednights2));
+		
+		
 		boldHeader($service, $spreadsheetId);
 		$range = 'Sheet1!A1:L';
 		
