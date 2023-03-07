@@ -28,7 +28,7 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-$date = $_GET['date'];
+
 $total = $_GET['total'];
 
 $service = new Google_Service_Sheets($client);
@@ -38,15 +38,15 @@ $service = new Google_Service_Sheets($client);
 		
 		
 		
-		 $values = array(array("Account","Address","Amount_due","Due_date","Date"));		  
+		 $values = array(array("Account","Address","Due_date","Amount_due","Date"));		  
 		  	
 				$sql = "SELECT * FROM `fpl_accounts2`";
 				$result = $conn->query($sql);	
 				while($row = $result->fetch_assoc()) {
 							//$date_due=date_create($row["due_date"]);
-							array_push($values,array($row["account_no"],$row["address"],number_format((float)preg_replace("/[^0-9.]/", "", $row["amount_due"]), 2, '.', ''),$row["due_date"],$date));
+							array_push($values,array($row["account_no"],$row["address"],$row["due_date"],number_format((float)preg_replace("/[^0-9.]/", "", $row["amount_due"]), 2, '.', ''),$row["updatedate"]));
 					}
-				array_push($values,array("Total","",$total,"",""));	
+				array_push($values,array("Total","","",$total,""));	
 		$range = 'Sheet1!A1:F';
 
 		print_r($values);	
