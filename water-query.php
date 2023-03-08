@@ -35,7 +35,7 @@ $service = new Google_Service_Sheets($client);
 		
 		  $values=array(array("Account No.","Location","Balance","Date","Account name"));
 		 	  		  	
-				$sql = "SELECT * FROM `water_bill`";
+				$sql = "SELECT * FROM `water_bill` where active = '1'";
 				$result = $conn->query($sql);	
 				while($row = $result->fetch_assoc()) {
 													
