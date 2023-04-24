@@ -233,7 +233,7 @@ $service = new Google_Service_Sheets($client);
 					
 					while($row = $result->fetch_assoc()) {
 							$couter+=1;
-							if($couter==6){
+							if($couter==11){
 								
 								$capacity2 += $row["Capacity"];
 								$oos2 += $row["OOS"];
