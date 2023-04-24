@@ -124,7 +124,7 @@ $service = new Google_Service_Sheets($client);
 		]);		
 		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
-		//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		//-----------------------5days---------------------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		$spreadsheetId = "1R83VGKq-255Ku6YLetYwnHitxMZDUpOTV5YinUxEMpE";	
 		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
@@ -195,7 +195,80 @@ $service = new Google_Service_Sheets($client);
 		]);		
 		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
 		printf("%d cells updated.", $result->getTotalUpdatedCells());
-		//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------10days----------------------------------------------------------------------------------------------------------------------------------------
+		
+		$spreadsheetId = "11yZR3IRN4mPK-F94mBzXGNr7O79jojAK_ZJ6l4EUsNM";	
+		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
+				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Sheet1!A1:L', $requestBody);
+		
+		$Hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset","AirBnB");
+		clearSheet($service, $spreadsheetId);
+		$values=array(array("Hotel","Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
+		
+		$capacity = 0;
+				$oos = 0;
+				$booked_rooms = 0;
+				$occupancy = 0;
+				$charges = 0;
+				$adr = 0;
+				$revpar = 0;
+				$bednights = 0;
+				$dates;
+				$couter=0;
+				
+				$capacity2 = 0;
+				$oos2 = 0;
+				$booked_rooms2 = 0;
+				$occupancy2 = 0;
+				$bednights2 = 0;
+		
+		foreach($Hotels as $Hotelc){
+			
+			
+			
+			$sql = "SELECT * FROM `occupancy_10days` where Hotel='".$Hotelc."'";
+			$result = $conn->query($sql);
+							
+					
+					while($row = $result->fetch_assoc()) {
+							$couter+=1;
+							if($couter==6){
+								
+								$capacity2 += $row["Capacity"];
+								$oos2 += $row["OOS"];
+								$booked_rooms2 += $row["Booked_rooms"];
+								$occupancy2 += $row["Occupancy"];
+								$bednights2 += $row["Bednights"];
+								$couter = 0;
+								
+							}
+							array_push($values,array($row["Hotel"],$row["Date"],$row["Capacity"],$row["OOS"],$row["Booked_rooms"],$row["Booked_percent"],$row["Occupancy"],$row["Occupancy_percent"],$row["Charges"],$row["ADR"],$row["RevPAR"],$row["Bednights"]));
+						}
+			
+					array_push($values,array("","","","","","","","","","","",""));		
+		}
+		array_push($values,array("Total","",$capacity2,$oos2,$booked_rooms2,"",$occupancy2,"","","","",$bednights2));
+		
+		
+		boldHeader($service, $spreadsheetId);
+		$range = 'Sheet1!A1:L';
+		
+		print_r($values);	
+		$data = [];
+		$data[] = new Google_Service_Sheets_ValueRange([
+			'range' => $range,
+			'values' => $values
+		]);	
+		// Additional ranges to update ...
+		$body = new Google_Service_Sheets_BatchUpdateValuesRequest([
+			'valueInputOption' => 'USER_ENTERED',
+			'data' => $data
+		]);		
+		$result = $service->spreadsheets_values->batchUpdate($spreadsheetId, $body);
+		printf("%d cells updated.", $result->getTotalUpdatedCells());
+		
+		//------------------1year----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 		
 		
 		$spreadsheetId = "1FzEctwqj9YTpENHTaFSb5dTgZ4TtCSh2XVkzNMPsxLQ";
