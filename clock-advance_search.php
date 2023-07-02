@@ -32,7 +32,7 @@ $service = new Google_Service_Sheets($client);
 
 			
 		$spreadsheetId = "1411DbG7TFk6-zIalztVG67idvJY9y2owNb6uxyJnBgc";
-		//$spreadsheetId = "1FdwdSg6a5MafX_ltDdTHH6DQk8_mYN5yRp_0zDbyQbM";
+		//$spreadsheetId = "1FdwdSg6a5MafX_ltDdTHH6DQk8_mYN5yRp_0zDbyQbM";//testbot
 		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset","AirBnB");
 		//$hotels = array("Aqua Hotel");
 		$totals = array();
@@ -40,7 +40,8 @@ $service = new Google_Service_Sheets($client);
 		foreach($hotels as $value){
 		
 				$requestBody = new Google_Service_Sheets_ClearValuesRequest();
-				$response = $service->spreadsheets_values->clear($spreadsheetId, $value.'!A1:D', $requestBody);		
+				$response = $service->spreadsheets_values->clear($spreadsheetId, $value.'!A1:D', $requestBody);	
+				clearSheet($service, $spreadsheetId);
 				$values=array(array("Number","Reference Number","Arrival","Departure","Stay","Guest name","Room charges","Other charges","Total charges","Balance","Marketing channel"));
 						$sql = "SELECT * FROM `advance_search` where hotel_name='".$value."'";
 						$result = $conn->query($sql);					
@@ -64,7 +65,22 @@ $service = new Google_Service_Sheets($client);
 				printf("%d cells updated.", $result->getTotalUpdatedCells());
 		}
 			
+function clearSheet($service, $spreadsheetID = 0){
+$request = new \Google_Service_Sheets_UpdateCellsRequest([
+    'updateCells' => [ 
+        'range' => [
+            'sheetId' => 0 
+        ],
+        'fields' => "*" //clears everything
+    ]
+  ]);
+$requests[] = $request;
 
+$requestBody = new Google_Service_Sheets_BatchUpdateSpreadsheetRequest();
+$requestBody->setRequests($requests);
+$response = $service->spreadsheets->batchUpdate($spreadsheetID, $requestBody);
+return $response;
+}
 
 	
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////
