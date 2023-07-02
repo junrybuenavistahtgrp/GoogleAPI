@@ -31,8 +31,8 @@ if ($conn->connect_error) {
 $service = new Google_Service_Sheets($client);
 
 			
-		//$spreadsheetId = "1411DbG7TFk6-zIalztVG67idvJY9y2owNb6uxyJnBgc";
-		$spreadsheetId = "1FdwdSg6a5MafX_ltDdTHH6DQk8_mYN5yRp_0zDbyQbM";//testbot
+		$spreadsheetId = "1411DbG7TFk6-zIalztVG67idvJY9y2owNb6uxyJnBgc";
+		//$spreadsheetId = "1FdwdSg6a5MafX_ltDdTHH6DQk8_mYN5yRp_0zDbyQbM";//testbot
 		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset","AirBnB");
 		//$hotels = array("Aqua Hotel");
 		$totals = array();
