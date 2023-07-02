@@ -29,12 +29,11 @@ if ($conn->connect_error) {
 }
 
 
-$total = "0";
+$total = $_GET['total'];
 
 $service = new Google_Service_Sheets($client);
 			
-		//$spreadsheetId = "15sAlPTHVMQKt9Sk3OO99Rbe4LZ1rBsC9FgzywhTS4Nw";
-		$spreadsheetId = "1ICrMu5XKc4a2D97C9OeR02Y_jqmA5GYyL7WYJmHo1Ek";
+		$spreadsheetId = "15sAlPTHVMQKt9Sk3OO99Rbe4LZ1rBsC9FgzywhTS4Nw";
 		clearSheet($service, $spreadsheetId);
 		
 		
@@ -47,18 +46,6 @@ $service = new Google_Service_Sheets($client);
 							//$date_due=date_create($row["due_date"]);
 							array_push($values,array($row["account_no"],$row["address"],$row["due_date"],number_format((float)preg_replace("/[^0-9.]/", "", $row["amount_due"]), 2, '.', ''),$row["updatedate"]));
 					}
-								//	$sql = "SELECT SUM(votes) AS value_sum FROM table_name";
-								//	$result = $conn->query($sql);
-
-								//	if ($result->num_rows > 0) {
-										// output data of each row
-								//		while($row = $result->fetch_assoc()) {
-								//			echo "sum is : " . $row["value_sum"];
-								//		}
-								//	} else {
-								//		echo "0 results";
-								//	}
-					
 				array_push($values,array("Total","","",$total,""));	
 		$range = 'Sheet1!A1:F';
 
