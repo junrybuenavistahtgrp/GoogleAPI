@@ -6,7 +6,8 @@ $curl = curl_init();
 
 curl_setopt_array($curl, [
   CURLOPT_HTTPHEADER => [
-    "Authorization: Bearer 11d89bd7b8c74708bfc135b244206fc8"
+    "Authorization: Bearer 11d89bd7b8c74708bfc135b244206fc8"                      
+
   ],
   CURLOPT_URL => "https://" . region . ".sms.api.sinch.com/xms/v1/" . servicePlanId . "/inbounds",
   CURLOPT_RETURNTRANSFER => true,
