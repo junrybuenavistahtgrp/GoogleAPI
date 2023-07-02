@@ -33,7 +33,8 @@ $total = $_GET['total'];
 
 $service = new Google_Service_Sheets($client);
 			
-		$spreadsheetId = "15sAlPTHVMQKt9Sk3OO99Rbe4LZ1rBsC9FgzywhTS4Nw";
+		//$spreadsheetId = "1ICrMu5XKc4a2D97C9OeR02Y_jqmA5GYyL7WYJmHo1Ek";//tesbot
+		$spreadsheetId = "15sAlPTHVMQKt9Sk3OO99Rbe4LZ1rBsC9FgzywhTS4Nw";//live
 		clearSheet($service, $spreadsheetId);
 		
 		
