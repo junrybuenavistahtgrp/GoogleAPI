@@ -41,7 +41,7 @@ $service = new Google_Service_Sheets($client);
 		
 		 $values = array(array("Account","Address","Due_date","Amount_due","Date"));		  
 		  	
-				$sql = "SELECT * FROM `fpl_accounts2` where active = '2' AND exist = '1'";
+				$sql = "SELECT * FROM `fpl_accounts2` where active = '1' AND exist = '1'";
 				$result = $conn->query($sql);	
 				while($row = $result->fetch_assoc()) {
 							//$date_due=date_create($row["due_date"]);
