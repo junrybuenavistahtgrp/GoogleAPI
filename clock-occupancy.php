@@ -130,7 +130,7 @@ $service = new Google_Service_Sheets($client);
 		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
 				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Sheet1!A1:L', $requestBody);
 		
-		$Hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset","AirBnB");
+		$Hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
 		clearSheet($service, $spreadsheetId);
 		$values=array(array("Hotel","Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
 		
@@ -202,7 +202,7 @@ $service = new Google_Service_Sheets($client);
 		$requestBody = new Google_Service_Sheets_ClearValuesRequest();
 				$response = $service->spreadsheets_values->clear($spreadsheetId, 'Sheet1!A1:L', $requestBody);
 		
-		$Hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset","AirBnB");
+		$Hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
 		clearSheet($service, $spreadsheetId);
 		$values=array(array("Hotel","Date","Capacity","OOS","Booked rooms","Booked %","Occupancy","Occupancy %","Charges","ADR","RevPAR","Bednights"));
 		
