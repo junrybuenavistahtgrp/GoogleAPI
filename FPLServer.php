@@ -14,7 +14,7 @@ if( isset( $_POST['submit'] ) ){
 	
     //$file_name = basename($_FILES["file"]["name"]);
 	$file_name = "2021-09-28_348868589.pdf";
-    $path = "C:/FPL_Downloads".$file_name;
+    $path = "C:/clock_csv".$file_name;
 	
 	
 

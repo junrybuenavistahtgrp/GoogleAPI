@@ -34,6 +34,9 @@ use Google\Client;
  */
 class CloudHealthcare extends \Google\Service
 {
+  /** Read, write and manage healthcare data. */
+  const CLOUD_HEALTHCARE =
+      "https://www.googleapis.com/auth/cloud-healthcare";
   /** See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account.. */
   const CLOUD_PLATFORM =
       "https://www.googleapis.com/auth/cloud-platform";
@@ -45,7 +48,11 @@ class CloudHealthcare extends \Google\Service
   public $projects_locations_datasets_consentStores_consentArtifacts;
   public $projects_locations_datasets_consentStores_consents;
   public $projects_locations_datasets_consentStores_userDataMappings;
+  public $projects_locations_datasets_dataMapperWorkspaces;
   public $projects_locations_datasets_dicomStores;
+  public $projects_locations_datasets_dicomStores_dicomWeb_studies;
+  public $projects_locations_datasets_dicomStores_dicomWeb_studies_series;
+  public $projects_locations_datasets_dicomStores_dicomWeb_studies_series_instances;
   public $projects_locations_datasets_dicomStores_studies;
   public $projects_locations_datasets_dicomStores_studies_series;
   public $projects_locations_datasets_dicomStores_studies_series_instances;
@@ -56,6 +63,7 @@ class CloudHealthcare extends \Google\Service
   public $projects_locations_datasets_hl7V2Stores_messages;
   public $projects_locations_datasets_operations;
   public $projects_locations_services_nlp;
+  public $rootUrlTemplate;
 
   /**
    * Constructs the internal representation of the CloudHealthcare service.
@@ -68,6 +76,7 @@ class CloudHealthcare extends \Google\Service
   {
     parent::__construct($clientOrConfig);
     $this->rootUrl = $rootUrl ?: 'https://healthcare.googleapis.com/';
+    $this->rootUrlTemplate = $rootUrl ?: 'https://healthcare.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
     $this->version = 'v1';
@@ -745,6 +754,50 @@ class CloudHealthcare extends \Google\Service
           ]
         ]
     );
+    $this->projects_locations_datasets_dataMapperWorkspaces = new CloudHealthcare\Resource\ProjectsLocationsDatasetsDataMapperWorkspaces(
+        $this,
+        $this->serviceName,
+        'dataMapperWorkspaces',
+        [
+          'methods' => [
+            'getIamPolicy' => [
+              'path' => 'v1/{+resource}:getIamPolicy',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'options.requestedPolicyVersion' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+              ],
+            ],'setIamPolicy' => [
+              'path' => 'v1/{+resource}:setIamPolicy',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'testIamPermissions' => [
+              'path' => 'v1/{+resource}:testIamPermissions',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->projects_locations_datasets_dicomStores = new CloudHealthcare\Resource\ProjectsLocationsDatasetsDicomStores(
         $this,
         $this->serviceName,
@@ -797,6 +850,16 @@ class CloudHealthcare extends \Google\Service
               ],
             ],'get' => [
               'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'getDICOMStoreMetrics' => [
+              'path' => 'v1/{+name}:getDICOMStoreMetrics',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -910,6 +973,16 @@ class CloudHealthcare extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'setBlobStorageSettings' => [
+              'path' => 'v1/{+resource}:setBlobStorageSettings',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'setIamPolicy' => [
               'path' => 'v1/{+resource}:setIamPolicy',
               'httpMethod' => 'POST',
@@ -938,6 +1011,76 @@ class CloudHealthcare extends \Google\Service
             ],'testIamPermissions' => [
               'path' => 'v1/{+resource}:testIamPermissions',
               'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_datasets_dicomStores_dicomWeb_studies = new CloudHealthcare\Resource\ProjectsLocationsDatasetsDicomStoresDicomWebStudies(
+        $this,
+        $this->serviceName,
+        'studies',
+        [
+          'methods' => [
+            'getStudyMetrics' => [
+              'path' => 'v1/{+study}:getStudyMetrics',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'study' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'setBlobStorageSettings' => [
+              'path' => 'v1/{+resource}:setBlobStorageSettings',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_datasets_dicomStores_dicomWeb_studies_series = new CloudHealthcare\Resource\ProjectsLocationsDatasetsDicomStoresDicomWebStudiesSeries(
+        $this,
+        $this->serviceName,
+        'series',
+        [
+          'methods' => [
+            'getSeriesMetrics' => [
+              'path' => 'v1/{+series}:getSeriesMetrics',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'series' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_datasets_dicomStores_dicomWeb_studies_series_instances = new CloudHealthcare\Resource\ProjectsLocationsDatasetsDicomStoresDicomWebStudiesSeriesInstances(
+        $this,
+        $this->serviceName,
+        'instances',
+        [
+          'methods' => [
+            'getStorageInfo' => [
+              'path' => 'v1/{+resource}:getStorageInfo',
+              'httpMethod' => 'GET',
               'parameters' => [
                 'resource' => [
                   'location' => 'path',
@@ -1289,6 +1432,16 @@ class CloudHealthcare extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'getFHIRStoreMetrics' => [
+              'path' => 'v1/{+name}:getFHIRStoreMetrics',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'getIamPolicy' => [
               'path' => 'v1/{+resource}:getIamPolicy',
               'httpMethod' => 'GET',
@@ -1349,6 +1502,16 @@ class CloudHealthcare extends \Google\Service
                   'type' => 'string',
                 ],
               ],
+            ],'rollback' => [
+              'path' => 'v1/{+name}:rollback',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'setIamPolicy' => [
               'path' => 'v1/{+resource}:setIamPolicy',
               'httpMethod' => 'POST',
@@ -1379,7 +1542,47 @@ class CloudHealthcare extends \Google\Service
         'fhir',
         [
           'methods' => [
-            'Patient-everything' => [
+            'Binary-create' => [
+              'path' => 'v1/{+parent}/fhir/Binary',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'Binary-read' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'Binary-update' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'PUT',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'Binary-vread' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'Patient-everything' => [
               'path' => 'v1/{+name}/$everything',
               'httpMethod' => 'GET',
               'parameters' => [
@@ -1423,11 +1626,75 @@ class CloudHealthcare extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'Resource-validate' => [
+              'path' => 'v1/{+parent}/fhir/{+type}/$validate',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'type' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'profile' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
             ],'capabilities' => [
               'path' => 'v1/{+name}/fhir/metadata',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'conditionalDelete' => [
+              'path' => 'v1/{+parent}/fhir/{+type}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'type' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'conditionalPatch' => [
+              'path' => 'v1/{+parent}/fhir/{+type}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'type' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'conditionalUpdate' => [
+              'path' => 'v1/{+parent}/fhir/{+type}',
+              'httpMethod' => 'PUT',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'type' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
@@ -1593,8 +1860,28 @@ class CloudHealthcare extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'export' => [
+              'path' => 'v1/{+name}:export',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'get' => [
               'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'getHL7v2StoreMetrics' => [
+              'path' => 'v1/{+name}:getHL7v2StoreMetrics',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -1615,6 +1902,16 @@ class CloudHealthcare extends \Google\Service
                 'options.requestedPolicyVersion' => [
                   'location' => 'query',
                   'type' => 'integer',
+                ],
+              ],
+            ],'import' => [
+              'path' => 'v1/{+name}:import',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
               ],
             ],'list' => [
@@ -1651,6 +1948,16 @@ class CloudHealthcare extends \Google\Service
                 'updateMask' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+              ],
+            ],'rollback' => [
+              'path' => 'v1/{+name}:rollback',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
               ],
             ],'setIamPolicy' => [

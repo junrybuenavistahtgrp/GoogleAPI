@@ -20,15 +20,39 @@ namespace Google\Service\Spanner;
 class CommitRequest extends \Google\Collection
 {
   protected $collection_key = 'mutations';
+  /**
+   * @var string
+   */
+  public $maxCommitDelay;
   protected $mutationsType = Mutation::class;
   protected $mutationsDataType = 'array';
   protected $requestOptionsType = RequestOptions::class;
   protected $requestOptionsDataType = '';
+  /**
+   * @var bool
+   */
   public $returnCommitStats;
   protected $singleUseTransactionType = TransactionOptions::class;
   protected $singleUseTransactionDataType = '';
+  /**
+   * @var string
+   */
   public $transactionId;
 
+  /**
+   * @param string
+   */
+  public function setMaxCommitDelay($maxCommitDelay)
+  {
+    $this->maxCommitDelay = $maxCommitDelay;
+  }
+  /**
+   * @return string
+   */
+  public function getMaxCommitDelay()
+  {
+    return $this->maxCommitDelay;
+  }
   /**
    * @param Mutation[]
    */
@@ -57,10 +81,16 @@ class CommitRequest extends \Google\Collection
   {
     return $this->requestOptions;
   }
+  /**
+   * @param bool
+   */
   public function setReturnCommitStats($returnCommitStats)
   {
     $this->returnCommitStats = $returnCommitStats;
   }
+  /**
+   * @return bool
+   */
   public function getReturnCommitStats()
   {
     return $this->returnCommitStats;
@@ -79,10 +109,16 @@ class CommitRequest extends \Google\Collection
   {
     return $this->singleUseTransaction;
   }
+  /**
+   * @param string
+   */
   public function setTransactionId($transactionId)
   {
     $this->transactionId = $transactionId;
   }
+  /**
+   * @return string
+   */
   public function getTransactionId()
   {
     return $this->transactionId;

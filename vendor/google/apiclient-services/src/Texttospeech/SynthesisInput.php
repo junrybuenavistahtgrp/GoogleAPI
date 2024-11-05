@@ -19,21 +19,55 @@ namespace Google\Service\Texttospeech;
 
 class SynthesisInput extends \Google\Model
 {
+  protected $customPronunciationsType = CustomPronunciations::class;
+  protected $customPronunciationsDataType = '';
+  /**
+   * @var string
+   */
   public $ssml;
+  /**
+   * @var string
+   */
   public $text;
 
+  /**
+   * @param CustomPronunciations
+   */
+  public function setCustomPronunciations(CustomPronunciations $customPronunciations)
+  {
+    $this->customPronunciations = $customPronunciations;
+  }
+  /**
+   * @return CustomPronunciations
+   */
+  public function getCustomPronunciations()
+  {
+    return $this->customPronunciations;
+  }
+  /**
+   * @param string
+   */
   public function setSsml($ssml)
   {
     $this->ssml = $ssml;
   }
+  /**
+   * @return string
+   */
   public function getSsml()
   {
     return $this->ssml;
   }
+  /**
+   * @param string
+   */
   public function setText($text)
   {
     $this->text = $text;
   }
+  /**
+   * @return string
+   */
   public function getText()
   {
     return $this->text;

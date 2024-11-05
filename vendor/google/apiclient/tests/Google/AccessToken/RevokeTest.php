@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Client;
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,86 +19,62 @@ use GuzzleHttp\Client;
  * under the License.
  */
 
-class Google_AccessToken_RevokeTest extends BaseTest
+namespace Google\Tests\AccessToken;
+
+use Google\AccessToken\Revoke;
+use Google\Tests\BaseTest;
+use Prophecy\Argument;
+
+class RevokeTest extends BaseTest
 {
-  public function testRevokeAccess()
-  {
-    $accessToken = 'ACCESS_TOKEN';
-    $refreshToken = 'REFRESH_TOKEN';
-    $token = '';
+    public function testRevokeAccess()
+    {
+        $accessToken = 'ACCESS_TOKEN';
+        $refreshToken = 'REFRESH_TOKEN';
+        $token = '';
 
-    $response = $this->getMock('Psr\Http\Message\ResponseInterface');
-    $response->expects($this->exactly(2))
-      ->method('getStatusCode')
-      ->will($this->returnValue(200));
-    $http = $this->getMock('GuzzleHttp\ClientInterface');
-    $http->expects($this->exactly(2))
-      ->method('send')
-      ->will($this->returnCallback(
-            function ($request) use (&$token, $response) {
-              parse_str((string) $request->getBody(), $fields);
-              $token = isset($fields['token']) ? $fields['token'] : null;
+        $response = $this->prophesize('Psr\Http\Message\ResponseInterface');
+        $response->getStatusCode()
+            ->shouldBeCalledTimes(3)
+            ->willReturn(200);
 
-              return $response;
-            }
-        ));
+        $http = $this->prophesize('GuzzleHttp\ClientInterface');
+        $http->send(Argument::type('Psr\Http\Message\RequestInterface'), [])
+            ->shouldBeCalledTimes(3)
+            ->will(function ($args) use (&$token, $response) {
+                parse_str((string) $args[0]->getBody(), $fields);
+                $token = isset($fields['token']) ? $fields['token'] : null;
 
-    // adds support for extra "createRequest" step (required for Guzzle 5)
-    if ($this->isGuzzle5()) {
-      $requestToken = null;
-      $request = $this->getMock('GuzzleHttp\Message\RequestInterface');
-      $request->expects($this->exactly(2))
-          ->method('getBody')
-          ->will($this->returnCallback(
-              function () use (&$requestToken) {
-                return 'token='.$requestToken;
-              }));
-      $http->expects($this->exactly(2))
-        ->method('createRequest')
-        ->will($this->returnCallback(
-              function ($method, $url, $params) use (&$requestToken, $request) {
-                parse_str((string) $params['body'], $fields);
-                $requestToken = isset($fields['token']) ? $fields['token'] : null;
+                return $response->reveal();
+            });
 
-                return $request;
-              }
-          ));
+        $t = [
+            'access_token' => $accessToken,
+            'created' => time(),
+            'expires_in' => '3600'
+        ];
+
+        // Test with access token.
+        $revoke = new Revoke($http->reveal());
+        $this->assertTrue($revoke->revokeToken($t));
+        $this->assertEquals($accessToken, $token);
+
+        // Test with refresh token.
+        $revoke = new Revoke($http->reveal());
+        $t = [
+            'access_token' => $accessToken,
+            'refresh_token' => $refreshToken,
+            'created' => time(),
+            'expires_in' => '3600'
+        ];
+
+        $this->assertTrue($revoke->revokeToken($t));
+        $this->assertEquals($refreshToken, $token);
+
+        // Test with token string.
+        $revoke = new Revoke($http->reveal());
+        $t = $accessToken;
+        $this->assertTrue($revoke->revokeToken($t));
+        $this->assertEquals($accessToken, $token);
     }
-
-    $t = array(
-      'access_token' => $accessToken,
-      'created' => time(),
-      'expires_in' => '3600'
-    );
-
-    // Test with access token.
-    $revoke = new Google_AccessToken_Revoke($http);
-    $this->assertTrue($revoke->revokeToken($t));
-    $this->assertEquals($accessToken, $token);
-
-    // Test with refresh token.
-    $revoke = new Google_AccessToken_Revoke($http);
-    $t = array(
-      'access_token' => $accessToken,
-      'refresh_token' => $refreshToken,
-      'created' => time(),
-      'expires_in' => '3600'
-    );
-    $this->assertTrue($revoke->revokeToken($t));
-    $this->assertEquals($refreshToken, $token);
-  }
-
-  public function testInvalidStringToken()
-  {
-    $phpVersion = phpversion();
-    if ('7' === $phpVersion[0]) {
-      // primitive type hints actually throw exceptions in PHP7
-      $this->setExpectedException('TypeError');
-    } else {
-      $this->setExpectedException('PHPUnit_Framework_Error');
-    }
-    // Test with string token
-    $revoke = new Google_AccessToken_Revoke();
-    $revoke->revokeToken('ACCESS_TOKEN');
-  }
 }

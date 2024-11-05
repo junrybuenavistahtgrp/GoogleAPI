@@ -17,6 +17,7 @@
 
 namespace Google\Service\Dialogflow\Resource;
 
+use Google\Service\Dialogflow\GoogleCloudDialogflowCxV3DeployFlowRequest;
 use Google\Service\Dialogflow\GoogleCloudDialogflowCxV3Environment;
 use Google\Service\Dialogflow\GoogleCloudDialogflowCxV3ListEnvironmentsResponse;
 use Google\Service\Dialogflow\GoogleCloudDialogflowCxV3LookupEnvironmentHistoryResponse;
@@ -29,7 +30,7 @@ use Google\Service\Dialogflow\GoogleProtobufEmpty;
  * Typical usage is:
  *  <code>
  *   $dialogflowService = new Google\Service\Dialogflow(...);
- *   $environments = $dialogflowService->environments;
+ *   $environments = $dialogflowService->projects_locations_agents_environments;
  *  </code>
  */
 class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
@@ -38,15 +39,17 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * Creates an Environment in the specified Agent. This method is a [long-running
    * operation](https://cloud.google.com/dialogflow/cx/docs/how/long-running-
    * operation). The returned `Operation` type has the following method-specific
-   * fields: - `metadata`: An empty [Struct message](https://developers.google.com
-   * /protocol-buffers/docs/reference/google.protobuf#struct) - `response`:
-   * Environment (environments.create)
+   * fields: - `metadata`: An empty [Struct
+   * message](https://developers.google.com/protocol-
+   * buffers/docs/reference/google.protobuf#struct) - `response`: Environment
+   * (environments.create)
    *
    * @param string $parent Required. The Agent to create an Environment for.
    * Format: `projects//locations//agents/`.
    * @param GoogleCloudDialogflowCxV3Environment $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function create($parent, GoogleCloudDialogflowCxV3Environment $postBody, $optParams = [])
   {
@@ -61,6 +64,7 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * `projects//locations//agents//environments/`.
    * @param array $optParams Optional parameters.
    * @return GoogleProtobufEmpty
+   * @throws \Google\Service\Exception
    */
   public function delete($name, $optParams = [])
   {
@@ -69,12 +73,33 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
     return $this->call('delete', [$params], GoogleProtobufEmpty::class);
   }
   /**
+   * Deploys a flow to the specified Environment. This method is a [long-running
+   * operation](https://cloud.google.com/dialogflow/cx/docs/how/long-running-
+   * operation). The returned `Operation` type has the following method-specific
+   * fields: - `metadata`: DeployFlowMetadata - `response`: DeployFlowResponse
+   * (environments.deployFlow)
+   *
+   * @param string $environment Required. The environment to deploy the flow to.
+   * Format: `projects//locations//agents//environments/`.
+   * @param GoogleCloudDialogflowCxV3DeployFlowRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
+   */
+  public function deployFlow($environment, GoogleCloudDialogflowCxV3DeployFlowRequest $postBody, $optParams = [])
+  {
+    $params = ['environment' => $environment, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('deployFlow', [$params], GoogleLongrunningOperation::class);
+  }
+  /**
    * Retrieves the specified Environment. (environments.get)
    *
    * @param string $name Required. The name of the Environment. Format:
    * `projects//locations//agents//environments/`.
    * @param array $optParams Optional parameters.
    * @return GoogleCloudDialogflowCxV3Environment
+   * @throws \Google\Service\Exception
    */
   public function get($name, $optParams = [])
   {
@@ -95,6 +120,7 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * @opt_param string pageToken The next_page_token value returned from a
    * previous list request.
    * @return GoogleCloudDialogflowCxV3ListEnvironmentsResponse
+   * @throws \Google\Service\Exception
    */
   public function listProjectsLocationsAgentsEnvironments($parent, $optParams = [])
   {
@@ -115,6 +141,7 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * @opt_param string pageToken The next_page_token value returned from a
    * previous list request.
    * @return GoogleCloudDialogflowCxV3LookupEnvironmentHistoryResponse
+   * @throws \Google\Service\Exception
    */
   public function lookupEnvironmentHistory($name, $optParams = [])
   {
@@ -126,9 +153,10 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * Updates the specified Environment. This method is a [long-running
    * operation](https://cloud.google.com/dialogflow/cx/docs/how/long-running-
    * operation). The returned `Operation` type has the following method-specific
-   * fields: - `metadata`: An empty [Struct message](https://developers.google.com
-   * /protocol-buffers/docs/reference/google.protobuf#struct) - `response`:
-   * Environment (environments.patch)
+   * fields: - `metadata`: An empty [Struct
+   * message](https://developers.google.com/protocol-
+   * buffers/docs/reference/google.protobuf#struct) - `response`: Environment
+   * (environments.patch)
    *
    * @param string $name The name of the environment. Format:
    * `projects//locations//agents//environments/`.
@@ -138,6 +166,7 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * @opt_param string updateMask Required. The mask to control which fields get
    * updated.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function patch($name, GoogleCloudDialogflowCxV3Environment $postBody, $optParams = [])
   {
@@ -147,9 +176,10 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
   }
   /**
    * Kicks off a continuous test under the specified Environment. This method is a
-   * [long-running operation](https://cloud.google.com/dialogflow/cx/docs/how
-   * /long-running-operation). The returned `Operation` type has the following
-   * method-specific fields: - `metadata`: RunContinuousTestMetadata - `response`:
+   * [long-running
+   * operation](https://cloud.google.com/dialogflow/cx/docs/how/long-running-
+   * operation). The returned `Operation` type has the following method-specific
+   * fields: - `metadata`: RunContinuousTestMetadata - `response`:
    * RunContinuousTestResponse (environments.runContinuousTest)
    *
    * @param string $environment Required. Format:
@@ -157,6 +187,7 @@ class ProjectsLocationsAgentsEnvironments extends \Google\Service\Resource
    * @param GoogleCloudDialogflowCxV3RunContinuousTestRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
    */
   public function runContinuousTest($environment, GoogleCloudDialogflowCxV3RunContinuousTestRequest $postBody, $optParams = [])
   {

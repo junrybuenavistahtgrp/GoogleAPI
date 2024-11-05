@@ -1,11 +1,7 @@
-phpunit.xml
-composer.phar
+.php-cs-fixer.php
+.php-cs-fixer.cache
+.phpunit.result.cache
 composer.lock
-composer-test.lock
 vendor/
-build/artifacts/
-artifacts/
-docs/_build
-docs/*.pyc
-.idea
-.DS_STORE
+/phpstan.neon
+/phpunit.xml

@@ -1,0 +1,20 @@
+{
+    "name": "admin/google-api",
+    "description": "A PHP project to upload files to Google Drive using the Google Drive API.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Admin\\GoogleApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Junrybuenavista",
+            "email": "42229618+Junrybuenavista@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.9",
+        "google/apiclient": "^2.18"
+    }
+}
