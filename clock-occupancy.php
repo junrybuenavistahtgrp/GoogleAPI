@@ -52,15 +52,46 @@ clearSheet($service, $spreadsheetId);
 $values = [["Hotel", "Date", "Capacity", "OOS", "Booked rooms", "Booked %", "Occupancy", "Occupancy %", "Charges", "ADR", "RevPAR", "Bednights"]];
 $sql = "SELECT * FROM `occupancy`";
 $result = $conn->query($sql);
+
 $capacity = $oos = $booked_rooms = $occupancy = $charges = $adr = $revpar = $bednights = 0;
+
+
 while ($row = $result->fetch_assoc()) {
+	
+	$booked_percent = floatval(str_replace('%', '', $row["Booked_percent"]));
+	$total_booked_percent += $booked_percent;
+	
+	$occupancy_percent = floatval(str_replace('%', '', $row["Occupancy_percent"]));
+	$total_occupancy_percent += $occupancy_percent;
+	
+	$charges = floatval(str_replace(['USD', ','], '', $row["Charges"]));
+	$total_charges += $charges;
+	
+	$adr = floatval(str_replace('', '', $row["ADR"]));
+	$total_adr += $adr;
+	
+	$revpar = floatval(str_replace('', '', $row["RevPAR"]));
+	$total_revpar += $revpar;
+	
+	
+	$count++;
     $values[] = [
         $row["Hotel"], $row["Date"], $row["Capacity"], $row["OOS"], $row["Booked_rooms"], $row["Booked_percent"],
         $row["Occupancy"], $row["Occupancy_percent"], $row["Charges"], $row["ADR"], $row["RevPAR"], $row["Bednights"]
     ];
+	$capacity += $row["Capacity"];
+	$oos += $row["OOS"];
+	$booked_rooms += $row["Booked_rooms"];
+	$average_booked_percent = $count != 0 ? number_format($total_booked_percent / $count, 2) . " %" : "N/A";
+	$occupancy += $row["Occupancy"];
+	$average_occupancy_percent = $count != 0 ? number_format($total_occupancy_percent / $count, 2) . " %" : "N/A";
+	$bednights += $row["Bednights"];
 }
-$occupancy_percentage = $capacity != 0 ? number_format((float)($occupancy / $capacity) * 100, 1, '.', '') . " %" : "N/A";
-$values[] = ["Total", "", $capacity, $oos, $booked_rooms, "", $occupancy, $occupancy_percentage, number_format($charges, 2) . " USD", $adr, $revpar, $bednights];
+
+$values[] = ["Total", "", $capacity, $oos, $booked_rooms, $average_booked_percent , $occupancy, $average_occupancy_percent, number_format($total_charges, 2, '.', ',') . " USD", $total_adr, $total_revpar, $bednights];
+
+
+
 updateSheet($service, $spreadsheetId, 'Sheet1!A1:L', $values);
 
 // Update occupancy report for 5 days
