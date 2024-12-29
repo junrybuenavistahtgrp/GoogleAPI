@@ -38,8 +38,8 @@ $service = new Google_Service_Sheets($client);
 		foreach($hotels as $value){
 		
 				$requestBody = new Google_Service_Sheets_ClearValuesRequest();
-				$response = $service->spreadsheets_values->clear($spreadsheetId, $value.'!A1:D', $requestBody);		
-				$values=array(array("Guest Name","Check In","Check Out","# of Nights"));
+				$response = $service->spreadsheets_values->clear($spreadsheetId, $value.'!A1:E', $requestBody);		
+				$values=array(array("Guest Name","Check In","Check Out","# of Nights","test"));
 						$sql = "SELECT * FROM `bookings` where hotel_name='".$value."'";
 						$result = $conn->query($sql);
 						$check_in_total=0;
@@ -51,13 +51,13 @@ $service = new Google_Service_Sheets($client);
 								} else {
 									$check_out_total++;
 								}
-								array_push($values,array($row["guest_name"],$row["check_in"],$row["check_out"],$row["no_nights"]));
+								array_push($values,array($row["guest_name"],$row["check_in"],$row["check_out"],$row["no_nights"],$row["is_arrival"] ? "Arrival" : "Departure"));
 									
 							}
-						array_push($values,array("Total","#Arrival: ".$check_in_total,"#Departure: ".$check_out_total));	
+						array_push($values,array("Total","#Arrival: ".$check_in_total,"#Departure: ".$check_out_total,""));	
 						array_push($totals,array($check_in_total,$check_out_total));
 						
-				$range = $value.'!A1:D';
+				$range = $value.'!A1:E';
 				
 				//print_r($values);	
 				$data = [];
