@@ -39,7 +39,7 @@ $service = new Google_Service_Sheets($client);
 		
 				$requestBody = new Google_Service_Sheets_ClearValuesRequest();
 				$response = $service->spreadsheets_values->clear($spreadsheetId, $value.'!A1:E', $requestBody);		
-				$values=array(array("Guest Name","Check In","Check Out","# of Nights","test"));
+				$values=array(array("Guest Name","Check In","Check Out","# of Nights",""));
 						$sql = "SELECT * FROM `bookings` where hotel_name='".$value."'";
 						$result = $conn->query($sql);
 						$check_in_total=0;
