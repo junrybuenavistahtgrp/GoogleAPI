@@ -32,7 +32,7 @@ $service = new Google_Service_Sheets($client);
 
 			
 		$spreadsheetId = "1L_YqbS363xBhci7n908pqlK5o4Xq65smLjtvlgY2WIk";
-		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tara Hotel","Tropirock","Winterset");
+		$hotels = array("Aqua Hotel","LaCasa","Royal Palms Resort & Spa","Tranquilo","Victoria Park Hotel","Beach Gardens","North Beach Hotel","Tropirock","Winterset");
 		$totals = array();
 	
 		foreach($hotels as $value){
