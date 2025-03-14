@@ -98,7 +98,7 @@ updateSheet($service, $spreadsheetId, 'Sheet1!A1:L', $values);
 $spreadsheetId = "1R83VGKq-255Ku6YLetYwnHitxMZDUpOTV5YinUxEMpE";
 clearSheet($service, $spreadsheetId);
 $values = [["Hotel", "Date", "Capacity", "OOS", "Booked rooms", "Booked %", "Occupancy", "Occupancy %", "Charges", "ADR", "RevPAR", "Bednights"]];
-$hotels = ["Aqua Hotel", "LaCasa", "Royal Palms Resort & Spa", "Tranquilo", "Victoria Park Hotel", "Beach Gardens", "North Beach Hotel", "Tara Hotel", "Tropirock", "Winterset"];
+$hotels = ["Aqua Hotel", "LaCasa", "Royal Palms Resort & Spa", "Tranquilo", "Victoria Park Hotel", "Beach Gardens", "North Beach Hotel", "Tropirock", "Winterset"];
 foreach ($hotels as $hotel) {
     $sql = "SELECT * FROM `occupancy_5days` WHERE Hotel='$hotel'";
     $result = $conn->query($sql);
